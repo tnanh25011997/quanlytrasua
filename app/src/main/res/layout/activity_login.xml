@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/backgroundDangNhap"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="52dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/lnKhungDangNhap"
+            android:layout_centerHorizontal="true"
+            android:text="@string/dangnhap"
+            android:textSize="30dp"
+            android:textStyle="bold"></TextView>
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_above="@id/lnKhungDangNhap"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="50dp"
+            android:src="@drawable/logotrasua"></ImageView>
+
+        <LinearLayout
+            android:id="@+id/lnKhungDangNhap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/txtTenDangNhap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@color/colorWhite"
+                android:drawableLeft="@drawable/ic_user"
+                android:drawablePadding="10dp"
+                android:hint="@string/tendangnhap"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColorHint="@color/colorGray">
+
+            </EditText>
+
+            <EditText
+                android:id="@+id/txtMatKhau"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@color/colorWhite"
+                android:drawableLeft="@drawable/ic_pass"
+                android:drawablePadding="10dp"
+                android:hint="@string/matkhau"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:inputType="textPassword"
+                android:textColorHint="@color/colorGray">
+
+            </EditText>
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@color/colorYellow"
+                android:text="đăng nhập">
+
+            </Button>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
