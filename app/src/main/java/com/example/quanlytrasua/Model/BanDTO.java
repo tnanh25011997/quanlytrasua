@@ -1,4 +1,4 @@
-package com.example.quanlytrasua.DTO;
+package com.example.quanlytrasua.Model;
 
 public class BanDTO {
     int maBan;

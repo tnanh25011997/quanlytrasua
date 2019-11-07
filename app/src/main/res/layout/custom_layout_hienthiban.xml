@@ -28,35 +28,35 @@
             android:layout_below="@id/txtTenBan"
             android:layout_gravity="center"
             app:srcCompat="@drawable/table" />
-        <ImageView
-            android:id="@+id/ivThemNuoc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/goimon2"
-            android:layout_below="@id/ivBan"
-            android:visibility="invisible"
-            />
-        <ImageView
-            android:id="@+id/ivThanhToan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/thanhtoan"
-            android:layout_below="@id/ivBan"
-            android:layout_toRightOf="@id/ivThemNuoc"
-            android:layout_marginLeft="15dp"
-            android:visibility="invisible"
-            />
-        <ImageView
-            android:id="@+id/ivAn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/anbutton"
-            android:layout_below="@id/ivBan"
-            android:layout_toRightOf="@id/ivThanhToan"
-            android:layout_marginLeft="15dp"
-            android:visibility="invisible"
+<!--        <ImageView-->
+<!--            android:id="@+id/ivThemNuoc"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/goimon2"-->
+<!--            android:layout_below="@id/ivBan"-->
 
-            />
+<!--            />-->
+<!--        <ImageView-->
+<!--            android:id="@+id/ivThanhToan"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/thanhtoan"-->
+<!--            android:layout_below="@id/ivBan"-->
+<!--            android:layout_toRightOf="@id/ivThemNuoc"-->
+<!--            android:layout_marginLeft="15dp"-->
+
+<!--            />-->
+<!--        <ImageView-->
+<!--            android:id="@+id/ivAn"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/anbutton"-->
+<!--            android:layout_below="@id/ivBan"-->
+<!--            android:layout_toRightOf="@id/ivThanhToan"-->
+<!--            android:layout_marginLeft="15dp"-->
+
+
+<!--            />-->
     </RelativeLayout>
 
 

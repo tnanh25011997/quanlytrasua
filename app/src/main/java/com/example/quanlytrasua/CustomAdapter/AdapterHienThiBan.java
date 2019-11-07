@@ -7,21 +7,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.core.view.LayoutInflaterFactory;
-
-import com.example.quanlytrasua.DTO.BanDTO;
+import com.example.quanlytrasua.Model.BanDTO;
 import com.example.quanlytrasua.R;
 
 import java.util.List;
 
-public class AdapterHienThiBan extends BaseAdapter implements View.OnClickListener{
+public class AdapterHienThiBan extends BaseAdapter {
 
     Context context;
     int layout;
     List<BanDTO> banDTOList;
-    ViewHolderBan viewHolderBan;
 
     public AdapterHienThiBan(Context context, int layout, List<BanDTO> banDTOList){
         this.context = context;
@@ -35,56 +31,42 @@ public class AdapterHienThiBan extends BaseAdapter implements View.OnClickListen
 
     @Override
     public Object getItem(int i) {
+        //return null;
         return banDTOList.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        return banDTOList.get(i).getMaBan();
+        //return 0;
+        return i;
     }
 
 
 
     public class ViewHolderBan{
-        ImageView ivBan, ivThanhToan, ivThemNuoc, ivAn;
+        ImageView ivBan;
         TextView txtTenBan;
     }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        View v = view;
-        if(v == null){
+        ViewHolderBan viewHolderBan;
+        if(view == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             viewHolderBan = new ViewHolderBan();
-            v = inflater.inflate(R.layout.custom_layout_hienthiban,viewGroup,false);
-            viewHolderBan.ivBan = v.findViewById(R.id.ivBan);
-            viewHolderBan.ivThemNuoc = v.findViewById(R.id.ivThemNuoc);
-            viewHolderBan.ivThanhToan = v.findViewById(R.id.ivThanhToan);
-            viewHolderBan.ivAn = v.findViewById(R.id.ivAn);
-            viewHolderBan.txtTenBan = v.findViewById(R.id.txtTenBan);
+            view = inflater.inflate(R.layout.custom_layout_hienthiban,null);
 
-            v.setTag(viewHolderBan);
+            viewHolderBan.ivBan = view.findViewById(R.id.ivBan);
+            viewHolderBan.txtTenBan = view.findViewById(R.id.txtTenBan);
 
-
+            view.setTag(viewHolderBan);
         }
         else {
-            viewHolderBan = (ViewHolderBan) v.getTag();
+            viewHolderBan = (ViewHolderBan) view.getTag();
         }
-        viewHolderBan.ivBan.setOnClickListener(this);
         BanDTO banDTO = banDTOList.get(i);
         viewHolderBan.txtTenBan.setText(banDTO.getTenBan());
-
-        return v;
+        return view;
     }
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        viewHolderBan = (ViewHolderBan) ((View)view.getParent()).getTag();
-        switch (id){
-            case R.id.ivBan:
 
-                viewHolderBan.ivThemNuoc.setVisibility(View.VISIBLE);
-                break;
-        }
-    }
 }
