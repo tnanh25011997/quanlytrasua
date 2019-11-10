@@ -3,4 +3,7 @@
     <string name="tendangnhap">Tên đăng nhập</string>
     <string name="matkhau">Mật khẩu</string>
     <string name="dangnhap">Đăng Nhập</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="DanhSachBan">Danh Sách Bàn</string>
 </resources>

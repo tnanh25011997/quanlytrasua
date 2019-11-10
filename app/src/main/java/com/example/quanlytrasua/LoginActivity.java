@@ -2,6 +2,7 @@ package com.example.quanlytrasua;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.ultil.Server;
+import com.example.quanlytrasua.ultil.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,11 +30,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText txtTenDangNhap,txtMatKhau;
     private Button btnLogin;
-    private static String URL_LOGIN="";
+    SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sessionManager = new SessionManager(this);
         txtTenDangNhap = findViewById(R.id.txtTenDangNhap);
         txtMatKhau = findViewById(R.id.txtMatKhau);
         btnLogin = findViewById(R.id.btnLogin);
@@ -68,7 +72,12 @@ public class LoginActivity extends AppCompatActivity {
                                     JSONObject object = jsonArray.getJSONObject(i);
                                     String name = object.getString("fullname");
                                     String tenDangNhap = object.getString("username");
-                                    Toast.makeText(LoginActivity.this,"đăng nhập ok" +name, Toast.LENGTH_LONG).show();
+
+                                    sessionManager.CreateSession(name, tenDangNhap);
+                                    Intent intent = new Intent(LoginActivity.this, DanhSachBanActivity.class);
+                                    intent.putExtra("fullname",name);
+                                    startActivity(intent);
+                                    finish();
                                 }
 
                             }
@@ -79,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(LoginActivity.this,"Lỗi", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this,"Sai Tên Tài Khoản Hoặc Mật Khẩu", Toast.LENGTH_LONG).show();
                         }
                     }
                 },

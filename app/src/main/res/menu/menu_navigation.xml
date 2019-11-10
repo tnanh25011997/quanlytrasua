@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item android:title="Danh sách bàn"
+            android:id="@+id/menudanhsachban"
+            android:icon="@drawable/ic_user"
+            android:checked="true"
+            >
+
+        </item>
+        <item android:title="Đăng Xuất"
+            android:id="@+id/menudangxuat"
+            android:icon="@drawable/ic_user">
+
+        </item>
+    </group>
+</menu>
