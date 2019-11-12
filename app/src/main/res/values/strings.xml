@@ -6,4 +6,7 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="DanhSachBan">Danh Sách Bàn</string>
+    <string name="thucuong">Thức Uống</string>
+    <string name="giathucuong">Giá thức uống</string>
+    <string name="tenthucuong">Tên thức uống</string>
 </resources>

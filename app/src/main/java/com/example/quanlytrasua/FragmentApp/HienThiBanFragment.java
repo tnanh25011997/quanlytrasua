@@ -1,9 +1,11 @@
 package com.example.quanlytrasua.FragmentApp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import androidx.annotation.NonNull;
@@ -16,8 +18,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiBan;
+import com.example.quanlytrasua.HoaDonActivity;
 import com.example.quanlytrasua.Model.BanDTO;
 import com.example.quanlytrasua.R;
+import com.example.quanlytrasua.ThucUongActivity;
 import com.example.quanlytrasua.ultil.Server;
 
 import org.json.JSONArray;
@@ -43,6 +47,31 @@ public class HienThiBanFragment extends Fragment {
         adapterHienThiBan = new AdapterHienThiBan(getActivity(), R.layout.custom_layout_hienthiban, banDTOList);
         gvHienThiBan.setAdapter(adapterHienThiBan);
         GetDuLieuBan();
+        gvHienThiBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (adapterView.getId())
+                {
+                    case R.id.gvHienThiBan:
+                        BanDTO table = banDTOList.get(i);
+                        int check = table.getTinhTrang();
+                        int maBan = table.getMaBan();
+                        if (check == 0)
+                        {
+                            Intent intent = new Intent(getActivity(), ThucUongActivity.class);
+                            intent.putExtra("table",maBan+"");
+                            startActivity(intent);
+                        }
+                        else if (check == 1)
+                        {
+                            Intent intent = new Intent(getActivity(), HoaDonActivity.class);
+                            intent.putExtra("table",maBan+"");
+                            startActivity(intent);
+                        }
+                        break;
+                }
+            }
+        });
         return view;
 
 

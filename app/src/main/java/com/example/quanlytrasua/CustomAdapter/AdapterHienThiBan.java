@@ -47,6 +47,7 @@ public class AdapterHienThiBan extends BaseAdapter {
     public class ViewHolderBan{
         ImageView ivBan;
         TextView txtTenBan;
+
     }
 
     @Override
@@ -60,6 +61,7 @@ public class AdapterHienThiBan extends BaseAdapter {
             viewHolderBan.ivBan = view.findViewById(R.id.ivBan);
             viewHolderBan.txtTenBan = view.findViewById(R.id.txtTenBan);
 
+
             view.setTag(viewHolderBan);
         }
         else {
@@ -67,6 +69,12 @@ public class AdapterHienThiBan extends BaseAdapter {
         }
         BanDTO banDTO = banDTOList.get(i);
         viewHolderBan.txtTenBan.setText(banDTO.getTenBan());
+        if(banDTO.getTinhTrang() == 1){
+
+        }
+        else{
+            viewHolderBan.ivBan.setImageResource(R.drawable.table_trong);
+        }
         return view;
     }
 
