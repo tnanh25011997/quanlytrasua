@@ -3,6 +3,7 @@ package com.example.quanlytrasua;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 public class ThucUongActivity extends AppCompatActivity {
     ListView lvHienThiThucUong;
     ArrayList<ThucUong> listThucUong;
+    ArrayList<ThucUong> listThucUongChecked = new ArrayList<>();
     ArrayList<LoaiThucUong> listLoaiThucUong;
     AdapterHienThiThucUong adapterHienThiThucUong;
     Toolbar toolbar;
@@ -57,47 +59,59 @@ public class ThucUongActivity extends AppCompatActivity {
     private String tenLoai;
     private ArrayList<String> arrItemSpinner = new ArrayList<>();
     private ArrayAdapter<String> adapter;
+    String maBanChecked;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thuc_uong);
-//        Intent intent = getIntent();
-//        test = findViewById(R.id.thucuong);
-//        test.setText(intent.getStringExtra("table"));
+        Intent intent = getIntent();
+        maBanChecked = intent.getStringExtra("table");
         AddControl();
         AddEvent();
 
     }
 
     private void AddEvent() {
-        spinner = findViewById(R.id.spinner);
         listThucUong = new ArrayList<ThucUong>();
         listLoaiThucUong = new ArrayList<LoaiThucUong>();
         adapterHienThiThucUong = new AdapterHienThiThucUong(this, R.layout.custom_layout_hienthithucuong, listThucUong);
         lvHienThiThucUong.setAdapter(adapterHienThiThucUong);
+
         getDuLieuThucUong();
+        arrItemSpinner.add("Chọn Loại Thức Uống");
         getDuLieuLoaiThucUong();
+
+
 
         adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, arrItemSpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(ThucUongActivity.this, "alo", Toast.LENGTH_LONG).show();
-//                ArrayList<ThucUong> arr = new ArrayList<ThucUong>();
-//                for (int j = 0; j<listLoaiThucUong.size(); j++)
-//                {
-//                    if (arrItemSpinner.get(i).equals(listThucUong.get(j).getTenLoai()))
-//                    {
-//                        arr.add(listThucUong.get(j));
-//
-//                    }
-//                }
-//                adapterHienThiThucUong = new AdapterHienThiThucUong(ThucUongActivity.this, R.layout.custom_layout_hienthithucuong, arr);
-//                lvHienThiThucUong.setAdapter(adapterHienThiThucUong);
-//                adapterHienThiThucUong.notifyDataSetChanged();
+                if(adapterView.getItemAtPosition(i).equals("Chọn Loại Thức Uống")){
+                    //do nothing
+                }
+                else{
+                    //String item = adapterView.getItemAtPosition(i).toString();
+                    //Toast.makeText(adapterView.getContext(),"selected "+item,Toast.LENGTH_LONG).show();
+                    ArrayList<ThucUong> arr = new ArrayList<>();
+                    for (int j = 0; j<listThucUong.size(); j++)
+                    {
+                        if (arrItemSpinner.get(i).equals(listThucUong.get(j).getTenLoai()))
+                        {
+                            arr.add(listThucUong.get(j));
+                        }
+                    }
+
+
+                    adapterHienThiThucUong = new AdapterHienThiThucUong(ThucUongActivity.this, R.layout.custom_layout_hienthithucuong, arr);
+                    lvHienThiThucUong.setAdapter(adapterHienThiThucUong);
+                    adapterHienThiThucUong.notifyDataSetChanged();
+                }
+
 
             }
 
@@ -113,6 +127,31 @@ public class ThucUongActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+        goToBill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (int i=0; i<listThucUong.size();i++)
+                {
+                    if (listThucUong.get(i).getCount() != 0)
+                    {
+                        listThucUongChecked.add(listThucUong.get(i));
+                    }
+                }
+                if (HoaDonActivity.CHECK_START_MENU)
+                {
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("result",listThucUongChecked);
+                    setResult(Activity.RESULT_OK,returnIntent);
+                    finish();
+                }else {
+                    Intent intent = new Intent(ThucUongActivity.this,HoaDonActivity.class);
+                    intent.putExtra("list",listThucUongChecked);
+                    intent.putExtra("table",maBanChecked);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 
@@ -165,7 +204,7 @@ public class ThucUongActivity extends AppCompatActivity {
                             anh = jsonObject.getString("anh");
                             tenLoai = jsonObject.getString("tenLoai");
                             count = 0;
-                            listThucUong.add(new ThucUong(id, tenThucUong,gia,maLoai,anh,count, tenLoai));
+                            listThucUong.add(new ThucUong(id, tenThucUong,gia,maLoai,anh, tenLoai));
 
                             adapterHienThiThucUong.notifyDataSetChanged();
                         } catch (JSONException e) {
@@ -186,10 +225,15 @@ public class ThucUongActivity extends AppCompatActivity {
     private void AddControl() {
         lvHienThiThucUong = findViewById(R.id.lvMenu);
         toolbar = findViewById(R.id.toolbarMenu);
-        //spinner = findViewById(R.id.spinner);
+        spinner = findViewById(R.id.spinner);
         btnBack = findViewById(R.id.btnBackMenu);
         goToBill = findViewById(R.id.btnGoToBill);
 
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
 }

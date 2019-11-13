@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HienThiBanFragment extends Fragment {
+
+    public static boolean CHECK_TABLE = false;
+
     GridView gvHienThiBan;
     List<BanDTO> banDTOList;
     AdapterHienThiBan adapterHienThiBan;
@@ -58,12 +61,14 @@ public class HienThiBanFragment extends Fragment {
                         int maBan = table.getMaBan();
                         if (check == 0)
                         {
+                            HienThiBanFragment.CHECK_TABLE = false;
                             Intent intent = new Intent(getActivity(), ThucUongActivity.class);
                             intent.putExtra("table",maBan+"");
                             startActivity(intent);
                         }
                         else if (check == 1)
                         {
+                            HienThiBanFragment.CHECK_TABLE = true;
                             Intent intent = new Intent(getActivity(), HoaDonActivity.class);
                             intent.putExtra("table",maBan+"");
                             startActivity(intent);

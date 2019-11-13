@@ -1,6 +1,8 @@
 package com.example.quanlytrasua.Model;
 
-public class ThucUong {
+import java.io.Serializable;
+
+public class ThucUong implements Serializable {
     private int id;
     private String tenThucUong;
     private long gia;
@@ -12,13 +14,13 @@ public class ThucUong {
     public ThucUong() {
     }
 
-    public ThucUong(int id, String tenThucUong, long gia, int maLoai, String anh, int count, String tenLoai) {
+    public ThucUong(int id, String tenThucUong, long gia, int maLoai, String anh, String tenLoai) {
         this.id = id;
         this.tenThucUong = tenThucUong;
         this.gia = gia;
         this.maLoai = maLoai;
         this.anh = anh;
-        this.count = count;
+        this.count = 0;
         this.tenLoai = tenLoai;
     }
 

@@ -1,18 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".HoaDonActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Đây là trang hóa đơn"/>
-    <TextView
-        android:id="@+id/hoadon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="alo"/>
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarBill"
+            app:titleTextColor="#ffffff"
+            android:layout_width="match_parent"
+            android:background="@color/backgroundDangNhap"
+            android:elevation="4dp"
+            android:layout_height="?attr/actionBarSize">
+            <FrameLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#ffffff"
+                    android:text="HÓA ĐƠN"
+                    android:layout_marginLeft="30dp"
+                    style="?android:attr/textAppearanceLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:layout_gravity="right"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:layout_marginRight="10dp"
+                        android:id="@+id/btnDayBill"
+                        android:src="@drawable/luubill"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp" />
+                    <ImageView
+                        android:layout_marginRight="10dp"
+                        android:id="@+id/btnThemBill"
+                        android:src="@drawable/thembill"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp" />
+                    <ImageView
+                        android:id="@+id/btnInBill"
+                        android:src="@drawable/thanhtoanbill"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="20dp"/>
+                </LinearLayout>
+            </FrameLayout>
+        </androidx.appcompat.widget.Toolbar>
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginLeft="15dp"
+
+
+                android:id="@+id/tvTableBill"
+                android:text="Bàn số: "
+                style="?android:attr/textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+
+        </LinearLayout>
+        <TextView
+            android:layout_marginLeft="20dp"
+            android:padding="10dp"
+            android:id="@+id/tvTimeBill"
+            android:text="Thời gian:"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:background="@drawable/shawdow"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:padding="10dp"
+                android:id="@+id/tvTongBill"
+                android:paddingTop="2dp"
+                android:paddingLeft="10dp"
+                style="?android:attr/textAppearanceMedium"
+                android:text="Tổng tiền "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lvThucUongBill"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+    </LinearLayout>
+
+</LinearLayout>
