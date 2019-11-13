@@ -1,5 +1,7 @@
 package com.example.quanlytrasua.Model;
 
+import androidx.annotation.NonNull;
+
 public class ThucUong {
     private int id;
     private String tenThucUong;
@@ -7,17 +9,19 @@ public class ThucUong {
     private int maLoai;
     private String anh;
     private int count=0;
+    private String tenLoai;
 
     public ThucUong() {
     }
 
-    public ThucUong(int id, String tenThucUong, long gia, int maLoai, String anh, int count) {
+    public ThucUong(int id, String tenThucUong, long gia, int maLoai, String anh, int count, String tenLoai) {
         this.id = id;
         this.tenThucUong = tenThucUong;
         this.gia = gia;
         this.maLoai = maLoai;
         this.anh = anh;
         this.count = count;
+        this.tenLoai = tenLoai;
     }
 
     public int getId() {
@@ -67,4 +71,13 @@ public class ThucUong {
     public void setCount(int count) {
         this.count = count;
     }
+
+    public String getTenLoai() {
+        return tenLoai;
+    }
+
+    public void setTenLoai(String tenLoai) {
+        this.tenLoai = tenLoai;
+    }
+
 }

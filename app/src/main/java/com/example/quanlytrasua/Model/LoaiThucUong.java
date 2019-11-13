@@ -1,11 +1,11 @@
 package com.example.quanlytrasua.Model;
 
+import androidx.annotation.NonNull;
+
 public class LoaiThucUong {
     private int id;
     private String tenLoai;
 
-    public LoaiThucUong() {
-    }
 
     public LoaiThucUong(int id, String tenLoai) {
         this.id = id;
@@ -26,5 +26,11 @@ public class LoaiThucUong {
 
     public void setTenLoai(String tenLoai) {
         this.tenLoai = tenLoai;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.tenLoai;
     }
 }
