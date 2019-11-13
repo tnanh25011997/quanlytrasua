@@ -61,9 +61,6 @@ public class ThucUongActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thuc_uong);
-//        Intent intent = getIntent();
-//        test = findViewById(R.id.thucuong);
-//        test.setText(intent.getStringExtra("table"));
         AddControl();
         AddEvent();
 
@@ -86,7 +83,9 @@ public class ThucUongActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(ThucUongActivity.this,dsLoaiThucUong.getItem(i).getTenLoai().toString(),Toast.LENGTH_SHORT).show();
+                listThucUong.clear();
+                getListThucUongByLoai(dsLoaiThucUong.getItem(i).getId()+"");
+                adapterHienThiThucUong.notifyDataSetChanged();
             }
 
             @Override
@@ -109,8 +108,6 @@ public class ThucUongActivity extends AppCompatActivity {
                             JSONObject jsonObject = response.getJSONObject(i);
                             idLoai = jsonObject.getInt("id");
                             tenLoaiThucUong = jsonObject.getString("tenLoai");
-
-
                             dsLoaiThucUong.addAll(new LoaiThucUong(idLoai,tenLoaiThucUong));
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -161,7 +158,43 @@ public class ThucUongActivity extends AppCompatActivity {
         });
         requestQueue.add(jsonArrayRequest);
     }
+    private void getListThucUongByLoai(String idLoai){
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanGetThucUongByLoai+idLoai, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                if(response !=null){
 
+                    for(int i=0; i<response.length(); i++){
+
+                        try {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            id = jsonObject.getInt("id");
+                            tenThucUong = jsonObject.getString("tenThucUong");
+                            gia = jsonObject.getLong("gia");
+                            maLoai = jsonObject.getInt("maLoai");
+                            anh = jsonObject.getString("anh");
+                            tenLoai = jsonObject.getString("tenLoai");
+                            count = 0;
+
+
+                            listThucUong.add(new ThucUong(id, tenThucUong,gia,maLoai,anh,count, tenLoai));
+
+                            adapterHienThiThucUong.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
     private void AddControl() {
         lvHienThiThucUong = findViewById(R.id.lvMenu);
         toolbar = findViewById(R.id.toolbarMenu);
