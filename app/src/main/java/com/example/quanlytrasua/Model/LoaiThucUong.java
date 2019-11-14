@@ -4,8 +4,6 @@ public class LoaiThucUong {
     private int id;
     private String tenLoai;
 
-    public LoaiThucUong() {
-    }
 
     public LoaiThucUong(int id, String tenLoai) {
         this.id = id;
