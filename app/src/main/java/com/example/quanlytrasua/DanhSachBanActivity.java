@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -31,6 +32,7 @@ public class DanhSachBanActivity extends AppCompatActivity implements Navigation
 
     SessionManager sessionManager;
     TextView name;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +41,7 @@ public class DanhSachBanActivity extends AppCompatActivity implements Navigation
         sessionManager = new SessionManager(this);
         sessionManager.checkLogin();
         AddControl();
+
 
     }
 

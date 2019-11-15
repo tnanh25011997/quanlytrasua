@@ -71,6 +71,8 @@ public class ThucUongActivity extends AppCompatActivity {
 
     }
 
+
+
     private void AddEvent() {
         listThucUong = new ArrayList<ThucUong>();
         listLoaiThucUong = new ArrayList<LoaiThucUong>();
@@ -230,10 +232,6 @@ public class ThucUongActivity extends AppCompatActivity {
         goToBill = findViewById(R.id.btnGoToBill);
 
     }
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
+
 
 }

@@ -39,14 +39,21 @@
                     android:layout_height="match_parent">
                     <ImageView
                         android:layout_marginRight="10dp"
-                        android:id="@+id/btnDayBill"
-                        android:src="@drawable/luubill"
+                        android:id="@+id/btnRefresh"
+                        android:src="@drawable/refresh"
                         android:layout_width="30dp"
                         android:layout_height="30dp" />
+
                     <ImageView
                         android:layout_marginRight="10dp"
                         android:id="@+id/btnThemBill"
                         android:src="@drawable/thembill"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp" />
+                    <ImageView
+                        android:layout_marginRight="10dp"
+                        android:id="@+id/btnDayBill"
+                        android:src="@drawable/luubill"
                         android:layout_width="30dp"
                         android:layout_height="30dp" />
                     <ImageView
