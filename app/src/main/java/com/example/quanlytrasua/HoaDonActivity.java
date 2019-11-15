@@ -1,12 +1,15 @@
 package com.example.quanlytrasua;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -64,11 +67,12 @@ public class HoaDonActivity extends AppCompatActivity {
     private void AddEvent() {
 
         if(HienThiBanFragment.CHECK_TABLE == false){
-            getDataCheckFalse();
-            initViewsCheckFalse();
+            LayDuLieuBanTrong();
+            TaoViewBanTrong();
+            getTongBill();
         }
         else{
-            getDataCheckTrue();
+            LayDuLieuBanCoNguoi();
         }
         imgThemBill.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,15 +85,15 @@ public class HoaDonActivity extends AppCompatActivity {
         imgDayBill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialogDayBill();
+                showDialogLuuHoaDon();
             }
         });
     }
 
-    private void showDialogDayBill() {
+    private void showDialogLuuHoaDon() {
         AlertDialog.Builder builder = new AlertDialog.Builder(HoaDonActivity.this);
         builder.setTitle("XÁC NHẬN");
-        builder.setMessage("Đẩy hóa đơn?");
+        builder.setMessage("Lưu hóa đơn?");
         builder.setPositiveButton("Thoát", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -106,12 +110,12 @@ public class HoaDonActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void getDataCheckTrue() {
+    private void LayDuLieuBanCoNguoi() {
         Intent intent = getIntent();
         table = intent.getStringExtra("table");
     }
 
-    private void initViewsCheckFalse() {
+    private void TaoViewBanTrong() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
         String[] str = timeStamp.split("_");
         String[] str2 = str[0].split("");
@@ -123,7 +127,7 @@ public class HoaDonActivity extends AppCompatActivity {
         String hour = str3[1]+str3[2];
         String minute = str3[3]+str3[4];
         String sec = str3[5]+str3[6];
-        tvTime.setText("Thời gian: "+day+"/"+month+"/"+year+"_"+hour+":"+minute+":"+sec);
+        tvTime.setText("Thời gian: "+day+"/"+month+"/"+year+"   "+hour+":"+minute+":"+sec);
 
         adapterHienThiHoaDon = new AdapterHienThiHoaDon(HoaDonActivity.this, R.layout.custom_layout_hienthihoadon, listThucUong);
         lvHoaDon.setAdapter(adapterHienThiHoaDon);
@@ -132,11 +136,99 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
-    private void getDataCheckFalse() {
+    private void LayDuLieuBanTrong() {
         listThucUong = new ArrayList<>();
         Intent intent = getIntent();
         listThucUong = (ArrayList<ThucUong>) intent.getSerializableExtra("list");
         String soBan= intent.getStringExtra("table");
         tvTable.setText("Bàn Số: "+soBan);
+    }
+
+    private void getTongBill(){
+        long total = 0;
+        for (int i=0; i<listThucUong.size(); i++){
+            total += listThucUong.get(i).getGia()*listThucUong.get(i).getCount();
+        }
+        tvTotalBill.setText("Tổng tiền: "+getTien(total));
+    }
+    private String getTien(long x){
+        String str = x+"";
+        String[] s1 = str.split("");
+        String money = "";
+        int count = 0;
+        int c = 0;
+        for (int i = s1.length - 1; i>=0; i--)
+        {
+            count++;
+            c++;
+            if (count == 3)
+            {
+                if (s1[i].equals(""))
+                {
+                    money = s1[i] +money;
+                    count = 0;
+                }
+                else if (c < s1.length-1){
+                    money = "," + s1[i] +money;
+                    count = 0;
+                }
+                else{
+                    money = s1[i] +money;
+                    count = 0;
+                }
+
+            }
+            else {
+                money = s1[i] + money;
+            }
+        }
+
+        return money+" VND";
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if (requestCode == 111) {
+            if(resultCode == Activity.RESULT_OK){
+                ArrayList<ThucUong> listThucUongThem = new ArrayList<>();
+                listThucUongThem = (ArrayList<ThucUong>) data.getSerializableExtra("result");
+                String str = "";
+                for (ThucUong item : listThucUong)
+                {
+                    str += item.getTenThucUong();
+                }
+                Log.e("--------------",str);
+                for (int j = 0; j<listThucUongThem.size(); j++)
+                {
+                    if (!str.contains(listThucUongThem.get(j).getTenThucUong()))
+                    {
+                        listThucUong.add(listThucUongThem.get(j));
+                    }
+                    else {
+                        for (int k=0; k<listThucUong.size(); k++)
+                        {
+                            if (listThucUong.get(k).getTenThucUong().equals(listThucUongThem.get(j).getTenThucUong()))
+                            {
+                                listThucUong.get(k).setCount(listThucUong.get(k).getCount()+listThucUongThem.get(j).getCount());
+                            }
+                        }
+                    }
+
+                }
+                for (ThucUong item : listThucUong)
+                {
+                   if(item.getCount() == 0){
+                       listThucUong.remove(item);
+                   }
+                }
+                CHECK_START_MENU = false;
+                getTongBill();
+                adapterHienThiHoaDon.notifyDataSetChanged();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+
+            }
+        }
     }
 }

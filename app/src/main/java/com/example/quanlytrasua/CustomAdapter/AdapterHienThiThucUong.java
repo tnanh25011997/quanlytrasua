@@ -53,11 +53,13 @@ public class AdapterHienThiThucUong extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         View viewRow = view;
+        final ViewHolder viewHolder;
         if (viewRow == null)
         {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             viewRow = inflater.inflate(layout,viewGroup,false);
-            AdapterHienThiThucUong.ViewHolder viewHolder = new AdapterHienThiThucUong.ViewHolder();
+            //AdapterHienThiThucUong.ViewHolder viewHolder = new AdapterHienThiThucUong.ViewHolder();
+            viewHolder = new ViewHolder();
 
             viewHolder.imgThucUong = viewRow.findViewById(R.id.imgThucUong);
             viewHolder.tvTen = viewRow.findViewById(R.id.tvTenThucUong);
@@ -68,9 +70,11 @@ public class AdapterHienThiThucUong extends BaseAdapter {
 
             viewRow.setTag(viewHolder);
         }
-
+        else{
+            viewHolder = (ViewHolder)viewRow.getTag();
+        }
         final ThucUong thucUong = arrItem.get(i);
-        final AdapterHienThiThucUong.ViewHolder viewHolder = (AdapterHienThiThucUong.ViewHolder) viewRow.getTag();
+        //final AdapterHienThiThucUong.ViewHolder viewHolder = (AdapterHienThiThucUong.ViewHolder) viewRow.getTag();
         Glide.with(context).load(Server.DuongDanAnh+thucUong.getAnh()).into(viewHolder.imgThucUong);
         viewHolder.tvTen.setText(thucUong.getTenThucUong());
         viewHolder.tvGia.setText(thucUong.getGia()+"");

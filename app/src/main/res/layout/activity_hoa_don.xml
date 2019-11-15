@@ -81,6 +81,7 @@
             android:padding="10dp"
             android:id="@+id/tvTimeBill"
             android:text="Thời gian:"
+            android:layout_gravity="center"
             style="?android:attr/textAppearanceMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
