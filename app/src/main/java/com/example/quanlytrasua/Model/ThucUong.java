@@ -2,7 +2,9 @@ package com.example.quanlytrasua.Model;
 
 import androidx.annotation.NonNull;
 
-public class ThucUong {
+import java.io.Serializable;
+
+public class ThucUong implements Serializable {
     private int id;
     private String tenThucUong;
     private long gia;

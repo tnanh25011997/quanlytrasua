@@ -3,6 +3,7 @@ package com.example.quanlytrasua;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -55,7 +56,7 @@ public class ThucUongActivity extends AppCompatActivity {
     private String anh;
     private int count=0;
     private String tenLoai;
-    private ArrayList<String> arrItemSpinner = new ArrayList<>();
+    private ArrayList<ThucUong> arrListThucUong;
     private ArrayAdapter<String> adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,29 @@ public class ThucUongActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        goToBill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<ThucUong> arrayListBill = new ArrayList<>();
+                for(ThucUong tu : listThucUong){
+                    if(tu.getCount() >0){
+                        arrayListBill.add(tu);
+                    }
+                }
+                if(BillActivity.CHECK_START_MENU){
+                    Intent resultInten = new Intent();
+                    resultInten.putExtra("result",arrayListBill);
+                    setResult(RESULT_OK,resultInten);
+                    finish();
+                }else{
+                    Intent intent = new Intent(ThucUongActivity.this,BillActivity.class);
+                    intent.putExtra("listBill",arrayListBill);
+                    startActivity(intent);
+                }
+
 
             }
         });
