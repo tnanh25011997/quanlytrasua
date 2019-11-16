@@ -11,4 +11,5 @@ public class Server {
     public static String DuongDanCapNhatBan = "http://"+localhost+"/quanlytrasua/mvc/BanController/updateBan/";
     public static String DuongDanThemVaoHoaDon = "http://"+localhost+"/quanlytrasua/mvc/HoaDonController/insertHoaDon/";
     public static String DuongDanThemVaoCTHoaDon = "http://"+localhost+"/quanlytrasua/mvc/ChiTietHoaDonController/insertChiTiet/";
+    public static String DuongDanMaxHoaDon = "http://"+localhost+"/quanlytrasua/mvc/HoaDonController/getMaxId/";
 }

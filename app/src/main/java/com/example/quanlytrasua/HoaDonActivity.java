@@ -20,12 +20,18 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiHoaDon;
 import com.example.quanlytrasua.FragmentApp.HienThiBanFragment;
+import com.example.quanlytrasua.Model.ModelMax;
 import com.example.quanlytrasua.Model.ThucUong;
 import com.example.quanlytrasua.ultil.Server;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +59,9 @@ public class HoaDonActivity extends AppCompatActivity {
     private ImageView imgRefresh;
     private int idBanchecking;
     long tongTien = 0;
+    public int maxHoaDon = 0;
+    private ArrayList<ModelMax> listmax = new ArrayList<ModelMax>();
+    ArrayList<String> chuoi = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +153,13 @@ public class HoaDonActivity extends AppCompatActivity {
         builder.setNegativeButton("Lưu", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+
                 LuuHoaDon();
+                Intent intent = new Intent(HoaDonActivity.this, DanhSachBanActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+
             }
         });
         AlertDialog alertDialog = builder.create();
@@ -152,18 +167,57 @@ public class HoaDonActivity extends AppCompatActivity {
     }
 
     private void LuuHoaDon() {
+        try {
+            ThemVaoBangHoaDon();
+            Thread.sleep(500);
+            CapNhatTinhTrangBan(idBanchecking, 1);
+            getMaxHoaDon();
+        }catch (Exception e){
 
-        CapNhatTinhTrangBan(idBanchecking, 1);
-        ThemVaoBangHoaDon();
-        ThemVaoBangChiTietHoaDon();
-        finish();
-        Intent intent = new Intent(HoaDonActivity.this, DanhSachBanActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        }
+
+
+
+        //ThemVaoBangChiTietHoaDon();
+        //Toast.makeText(HoaDonActivity.this,"alo"+listmax.size(),Toast.LENGTH_LONG).show();
+
 
     }
+    private void getMaxHoaDon(){
 
-    private void ThemVaoBangChiTietHoaDon() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, Server.DuongDanMaxHoaDon, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        for(int i=0; i< response.length(); i++){
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                int a = jsonObject.getInt("max");
+                                ThemVaoBangChiTietHoaDon(a);
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
+
+        requestQueue.add(jsonArrayRequest);
+
+
+
+    }
+    private void ThemVaoBangChiTietHoaDon(final int maHoaDon) {
         for(final ThucUong thucUong : listThucUong) {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoCTHoaDon,
@@ -174,7 +228,8 @@ public class HoaDonActivity extends AppCompatActivity {
 
                                 Toast.makeText(HoaDonActivity.this, "Đã thêm chi hóa đơn", Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật", Toast.LENGTH_LONG).show();
+                                Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật chi tiết hóa đơn", Toast.LENGTH_LONG).show();
+
                             }
                         }
                     },
@@ -188,8 +243,11 @@ public class HoaDonActivity extends AppCompatActivity {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
+
                     params.put("mathucuong", String.valueOf(thucUong.getId()));
                     params.put("soluong", String.valueOf(thucUong.getCount()));
+                    params.put("mahoadon",String.valueOf(maHoaDon));
+
                     return params;
                 }
             };
@@ -209,7 +267,7 @@ public class HoaDonActivity extends AppCompatActivity {
 
                         }
                         else{
-                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật",Toast.LENGTH_LONG).show();
+                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật hóa đơn",Toast.LENGTH_LONG).show();
                         }
                     }
                 },
@@ -241,7 +299,7 @@ public class HoaDonActivity extends AppCompatActivity {
 
                         }
                         else{
-                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật",Toast.LENGTH_LONG).show();
+                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật bàn",Toast.LENGTH_LONG).show();
                         }
                     }
                 },
