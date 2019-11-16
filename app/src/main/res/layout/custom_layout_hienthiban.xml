@@ -3,16 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-
-    >
+    android:layout_gravity="center">
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
-        android:id="@+id/motban"
-        >
+        android:id="@+id/motban" >
         <TextView
             android:id="@+id/txtTenBan"
             android:layout_marginTop="10dp"
@@ -20,9 +18,7 @@
             android:layout_height="wrap_content"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:layout_centerHorizontal="true"
-
-            />
+            android:layout_centerHorizontal="true"/>
 
         <ImageView
             android:id="@+id/ivBan"
@@ -33,14 +29,6 @@
             android:layout_gravity="center"
             app:srcCompat="@drawable/table" />
 
-
-
-
-
-
     </RelativeLayout>
-
-
-
-
 </RelativeLayout>
+

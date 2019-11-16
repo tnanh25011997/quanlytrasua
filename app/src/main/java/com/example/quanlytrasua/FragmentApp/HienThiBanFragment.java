@@ -18,6 +18,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiBan;
+import com.example.quanlytrasua.DanhSachBanActivity;
 import com.example.quanlytrasua.HoaDonActivity;
 import com.example.quanlytrasua.Model.BanDTO;
 import com.example.quanlytrasua.R;
@@ -65,6 +66,8 @@ public class HienThiBanFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), ThucUongActivity.class);
                             intent.putExtra("table",maBan+"");
                             startActivity(intent);
+                            //getActivity().finish();
+
                         }
                         else if (check == 1)
                         {
@@ -72,6 +75,8 @@ public class HienThiBanFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), HoaDonActivity.class);
                             intent.putExtra("table",maBan+"");
                             startActivity(intent);
+
+
                         }
                         break;
                 }

@@ -13,7 +13,10 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ThucUongActivity"></activity>
         <activity android:name=".HoaDonActivity" />
-        <activity android:name=".DanhSachBanActivity" />
+        <activity
+            android:name=".DanhSachBanActivity"
+
+            />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

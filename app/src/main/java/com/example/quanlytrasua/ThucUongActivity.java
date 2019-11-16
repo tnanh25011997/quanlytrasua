@@ -60,6 +60,7 @@ public class ThucUongActivity extends AppCompatActivity {
     private ArrayList<String> arrItemSpinner = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     String maBanChecked;
+    private ArrayList<Integer> arr = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +69,11 @@ public class ThucUongActivity extends AppCompatActivity {
         maBanChecked = intent.getStringExtra("table");
         AddControl();
         AddEvent();
-
+        getMaxHoaDon();
+        //Thread.sleep(3000);
     }
+
+
 
     private void AddEvent() {
         listThucUong = new ArrayList<ThucUong>();
@@ -186,7 +190,33 @@ public class ThucUongActivity extends AppCompatActivity {
         });
         requestQueue.add(jsonArrayRequest);
     }
+    public void getMaxHoaDon() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        int ck=0;
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanThemVaoGetMax, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                if(response !=null){
+                        try {
+                            JSONObject jsonObject = response.getJSONObject(0);
+                            String ta = jsonObject.getString("max");
+                            arr.add(Integer.parseInt(ta));
+                            Toast.makeText(ThucUongActivity.this,"hello 21 " + arr.size(),Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        Toast.makeText(ThucUongActivity.this,"hello 21 " + arr.size(),Toast.LENGTH_SHORT).show();
+        requestQueue.add(jsonArrayRequest);
+    }
     private void getDuLieuThucUong() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanThucUong, new Response.Listener<JSONArray>() {
@@ -230,10 +260,6 @@ public class ThucUongActivity extends AppCompatActivity {
         goToBill = findViewById(R.id.btnGoToBill);
 
     }
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
+
 
 }
