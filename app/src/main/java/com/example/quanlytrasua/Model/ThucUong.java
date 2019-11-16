@@ -11,7 +11,14 @@ public class ThucUong implements Serializable {
     private int count=0;
     private String tenLoai;
 
-    public ThucUong() {
+    public ThucUong(int id_thucuong, String tenthucuong, long gia, int maloai, String anh, int soluong, String tenloai) {
+        this.id = id_thucuong;
+        this.tenThucUong = tenthucuong;
+        this.gia = gia;
+        this.maLoai = maloai;
+        this.anh = anh;
+        this.count = soluong;
+        this.tenLoai = tenloai;
     }
 
     public ThucUong(int id, String tenThucUong, long gia, int maLoai, String anh, String tenLoai) {

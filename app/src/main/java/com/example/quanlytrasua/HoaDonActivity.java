@@ -50,7 +50,7 @@ public class HoaDonActivity extends AppCompatActivity {
     private AdapterHienThiHoaDon adapterHienThiHoaDon;
     private ArrayList<ThucUong> listThucUong;
     private String table;
-    private String time;
+    private String thoigian;
 
     private TextView tvTotalBill;
     private ImageView imgThemBill;
@@ -59,9 +59,8 @@ public class HoaDonActivity extends AppCompatActivity {
     private ImageView imgRefresh;
     private int idBanchecking;
     long tongTien = 0;
-    public int maxHoaDon = 0;
-    private ArrayList<ModelMax> listmax = new ArrayList<ModelMax>();
-    ArrayList<String> chuoi = new ArrayList<>();
+    int maHoaDONNN = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +69,6 @@ public class HoaDonActivity extends AppCompatActivity {
 
         AddControl();
         AddEvent();
-
-
 
     }
 
@@ -102,8 +99,12 @@ public class HoaDonActivity extends AppCompatActivity {
             getTongBill();
         }
         else{
+            listThucUong = new ArrayList<ThucUong>();
+            adapterHienThiHoaDon = new AdapterHienThiHoaDon(HoaDonActivity.this, R.layout.custom_layout_hienthihoadon, listThucUong);
+            lvHoaDon.setAdapter(adapterHienThiHoaDon);
             LayDuLieuBanCoNguoi();
             TaoViewBanCoNguoi();
+
         }
         imgThemBill.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,18 +123,18 @@ public class HoaDonActivity extends AppCompatActivity {
         imgRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                for (Iterator<ThucUong> it = listThucUong.iterator(); it.hasNext();) {
-//                    if (it.next().getCount()==0) {
-//                        it.remove();
-//                    }
-//                }
+
                 for(int i = listThucUong.size() - 1; i>=0; i--)
                 {
                     if(listThucUong.get(i).getCount()==0)
                         listThucUong.remove(i);
                 }
-                startActivity(getIntent());
-                finish();
+                getTongBill();
+                Toast.makeText(HoaDonActivity.this, "a"+maHoaDONNN,Toast.LENGTH_LONG).show();
+//
+//                startActivity(getIntent());
+//                finish();
+                adapterHienThiHoaDon.notifyDataSetChanged();
             }
         });
     }
@@ -168,56 +169,57 @@ public class HoaDonActivity extends AppCompatActivity {
 
     private void LuuHoaDon() {
         try {
+            XoaHetChiTietCu();
             ThemVaoBangHoaDon();
             Thread.sleep(500);
             CapNhatTinhTrangBan(idBanchecking, 1);
-            getMaxHoaDon();
+            ThemVaoBangChiTietHoaDon();
+            //getMaxHoaDon();
         }catch (Exception e){
 
         }
 
 
-
-        //ThemVaoBangChiTietHoaDon();
-        //Toast.makeText(HoaDonActivity.this,"alo"+listmax.size(),Toast.LENGTH_LONG).show();
-
-
     }
-    private void getMaxHoaDon(){
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, Server.DuongDanMaxHoaDon, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-
-                        for(int i=0; i< response.length(); i++){
-                            try {
-                                JSONObject jsonObject = response.getJSONObject(i);
-                                int a = jsonObject.getInt("max");
-                                ThemVaoBangChiTietHoaDon(a);
-
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        );
-
-        requestQueue.add(jsonArrayRequest);
-
-
-
+    private void XoaHetChiTietCu() {
     }
-    private void ThemVaoBangChiTietHoaDon(final int maHoaDon) {
+
+    //    private void getMaxHoaDon(){
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, Server.DuongDanMaxHoaDon, null,
+//                new Response.Listener<JSONArray>() {
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//
+//                        for(int i=0; i< response.length(); i++){
+//                            try {
+//                                JSONObject jsonObject = response.getJSONObject(i);
+//                                int a = jsonObject.getInt("max");
+//                                ThemVaoBangChiTietHoaDon(a);
+//
+//
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                    }
+//                }
+//        );
+//
+//        requestQueue.add(jsonArrayRequest);
+//
+//
+//
+//    }
+    private void ThemVaoBangChiTietHoaDon() {
         for(final ThucUong thucUong : listThucUong) {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoCTHoaDon,
@@ -246,7 +248,7 @@ public class HoaDonActivity extends AppCompatActivity {
 
                     params.put("mathucuong", String.valueOf(thucUong.getId()));
                     params.put("soluong", String.valueOf(thucUong.getCount()));
-                    params.put("mahoadon",String.valueOf(maHoaDon));
+                    //params.put("mahoadon",String.valueOf(maHoaDon));
 
                     return params;
                 }
@@ -323,6 +325,8 @@ public class HoaDonActivity extends AppCompatActivity {
     private void LayDuLieuBanCoNguoi() {
         Intent intent = getIntent();
         table = intent.getStringExtra("table");
+
+
     }
 
     private void TaoViewBanTrong() {
@@ -347,6 +351,47 @@ public class HoaDonActivity extends AppCompatActivity {
     }
     private void TaoViewBanCoNguoi() {
 
+        tvTable.setText("Bàn "+table);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanGetDataBan + table, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                if(response !=null){
+                    for(int i=0; i<response.length(); i++){
+
+                        try {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            int id_thucuong = jsonObject.getInt("id_thucuong");
+                            String tenThucUong = jsonObject.getString("tenthucuong");
+                            long gia = jsonObject.getLong("gia");
+                            int maLoai = jsonObject.getInt("maloai");
+                            String anh = jsonObject.getString("anh");
+                            String tenLoai = jsonObject.getString("tenloai");
+                            int count = jsonObject.getInt("soluong");;
+                            listThucUong.add(new ThucUong(id_thucuong, tenThucUong,gia,maLoai,anh,count ,tenLoai));
+                            tongTien = jsonObject.getLong("thanhtien");
+                            thoigian = jsonObject.getString("ngaytao");
+                            maHoaDONNN = jsonObject.getInt("id_hoadon");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    tvTime.setText("Thời gian: "+thoigian);
+                    tvTotalBill.setText("Tổng tiền: "+getTien(tongTien));
+
+                    adapterHienThiHoaDon.notifyDataSetChanged();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+
 
     }
 
@@ -360,7 +405,7 @@ public class HoaDonActivity extends AppCompatActivity {
     }
 
     private void getTongBill(){
-
+        tongTien = 0;
         for (int i=0; i<listThucUong.size(); i++){
             tongTien += listThucUong.get(i).getGia()*listThucUong.get(i).getCount();
         }
