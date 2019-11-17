@@ -53,9 +53,9 @@ public class DanhSachBanActivity extends AppCompatActivity implements Navigation
 
         name = findViewById(R.id.tenUser);
         Intent intent = getIntent();
-        String extraName =  intent.getStringExtra("fullname");
+        //String extraName =  intent.getStringExtra("fullname");
         //name.setText(extraName);
-        toolbar.setTitle("Hello "+extraName);
+        //toolbar.setTitle("Hello "+extraName);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

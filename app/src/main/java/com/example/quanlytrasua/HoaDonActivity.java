@@ -59,7 +59,7 @@ public class HoaDonActivity extends AppCompatActivity {
     private ImageView imgRefresh;
     private int idBanchecking;
     long tongTien = 0;
-    int maHoaDONNN = 0;
+    int maHOADONCHECK = 0;
 
 
     @Override
@@ -130,15 +130,78 @@ public class HoaDonActivity extends AppCompatActivity {
                         listThucUong.remove(i);
                 }
                 getTongBill();
-                Toast.makeText(HoaDonActivity.this, "a"+maHoaDONNN,Toast.LENGTH_LONG).show();
-//
-//                startActivity(getIntent());
-//                finish();
+                Toast.makeText(HoaDonActivity.this, "Refresh bàn có mã hóa đơn là "+maHOADONCHECK+" trong CSDL",Toast.LENGTH_LONG).show();
                 adapterHienThiHoaDon.notifyDataSetChanged();
+            }
+        });
+        imgInBill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogThanhToan();
             }
         });
     }
 
+    private void showDialogThanhToan() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HoaDonActivity.this);
+        builder.setTitle("XÁC NHẬN");
+        builder.setMessage("Xác nhận thanh toán?");
+        builder.setPositiveButton("Thoát", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setNegativeButton("Lưu", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ThanhToan();
+
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void ThanhToan() {
+        if(maHOADONCHECK == 0){
+            Toast.makeText(HoaDonActivity.this, "Chưa có Hóa đơn nào được lưu!", Toast.LENGTH_LONG).show();
+        }else{
+            CapNhatTinhTrangBan(Integer.parseInt(table),0);
+            UpdateTinhTrangHoaDon(maHOADONCHECK);
+            Intent intent = new Intent(HoaDonActivity.this, DanhSachBanActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+
+    }
+
+    private void UpdateTinhTrangHoaDon(final int maHoaDonCheck) {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanCapNhatTrangThaiHoaDon,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(HoaDonActivity.this, "Đã thanh toán hóa đơn có mã "+maHoaDonCheck,Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("idHoaDon",String.valueOf(maHoaDonCheck));
+                return params;
+            }
+        };
+        requestQueue.add(stringRequest);
+    }
 
 
     private void showDialogLuuHoaDon() {
@@ -169,11 +232,11 @@ public class HoaDonActivity extends AppCompatActivity {
 
     private void LuuHoaDon() {
         try {
-            XoaHetChiTietCu();
-            ThemVaoBangHoaDon();
+            XoaHetChiTietCu(maHOADONCHECK);
+            ThemVaoBangHoaDon(maHOADONCHECK);
             Thread.sleep(500);
             CapNhatTinhTrangBan(idBanchecking, 1);
-            ThemVaoBangChiTietHoaDon();
+            ThemVaoBangChiTietHoaDon(maHOADONCHECK);
             //getMaxHoaDon();
         }catch (Exception e){
 
@@ -182,7 +245,31 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
-    private void XoaHetChiTietCu() {
+    private void XoaHetChiTietCu(final int maHoaDonCheck) {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanXoaCTHD,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("mahoadon", String.valueOf(maHoaDonCheck));
+                return params;
+            }
+        };
+        requestQueue.add(stringRequest);
+
     }
 
     //    private void getMaxHoaDon(){
@@ -219,10 +306,10 @@ public class HoaDonActivity extends AppCompatActivity {
 //
 //
 //    }
-    private void ThemVaoBangChiTietHoaDon() {
+    private void ThemVaoBangChiTietHoaDon(int maHoaDonCheck) {
         for(final ThucUong thucUong : listThucUong) {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoCTHoaDon,
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoCTHoaDon+maHoaDonCheck,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -258,9 +345,9 @@ public class HoaDonActivity extends AppCompatActivity {
     }
 
 
-    private void ThemVaoBangHoaDon() {
+    private void ThemVaoBangHoaDon(int maHoaDonCheck) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoHoaDon,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoHoaDon+maHoaDonCheck,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -372,7 +459,7 @@ public class HoaDonActivity extends AppCompatActivity {
                             listThucUong.add(new ThucUong(id_thucuong, tenThucUong,gia,maLoai,anh,count ,tenLoai));
                             tongTien = jsonObject.getLong("thanhtien");
                             thoigian = jsonObject.getString("ngaytao");
-                            maHoaDONNN = jsonObject.getInt("id_hoadon");
+                            maHOADONCHECK = jsonObject.getInt("id_hoadon");
 
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -13,4 +13,6 @@ public class Server {
     public static String DuongDanThemVaoCTHoaDon = "http://"+localhost+"/quanlytrasua/mvc/ChiTietHoaDonController/insertChiTiet/";
     //public static String DuongDanMaxHoaDon = "http://"+localhost+"/quanlytrasua/mvc/HoaDonController/getMaxId/";
     public static String DuongDanGetDataBan = "http://"+localhost+"/quanlytrasua/mvc/DatabanController/getDataBan/";
+    public static String DuongDanXoaCTHD = "http://"+localhost+"/quanlytrasua/mvc/ChiTietHoaDonController/deleteChiTiet/";
+    public static String DuongDanCapNhatTrangThaiHoaDon = "http://"+localhost+"/quanlytrasua/mvc/HoaDonController/updateTinhTrang/";
 }
