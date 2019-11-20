@@ -13,8 +13,5 @@ public class HoaDonActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hoa_don);
-//        Intent intent = getIntent();
-//        test = findViewById(R.id.hoadon);
-//        test.setText(intent.getStringExtra("table"));
     }
 }

@@ -69,6 +69,7 @@ public class ThucUongActivity extends AppCompatActivity {
 
     private void AddEvent() {
         spinner = findViewById(R.id.spinner);
+
         dsLoaiThucUong = new ArrayAdapter<>(
                 ThucUongActivity.this,
                 android.R.layout.simple_spinner_item
@@ -84,6 +85,7 @@ public class ThucUongActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
                 listThucUong.clear();
                 getListThucUongByLoai(dsLoaiThucUong.getItem(i).getId()+"");
                 adapterHienThiThucUong.notifyDataSetChanged();
@@ -98,6 +100,8 @@ public class ThucUongActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ArrayList<ThucUong> arrayListBill = new ArrayList<>();
+                Intent intent2 = getIntent();
+                System.out.println("------------->aaa");
                 for(ThucUong tu : listThucUong){
                     if(tu.getCount() >0){
                         arrayListBill.add(tu);
@@ -111,6 +115,7 @@ public class ThucUongActivity extends AppCompatActivity {
                 }else{
                     Intent intent = new Intent(ThucUongActivity.this,BillActivity.class);
                     intent.putExtra("listBill",arrayListBill);
+                    intent.putExtra("table",intent2.getStringExtra("table"));
                     startActivity(intent);
                 }
 
@@ -200,7 +205,6 @@ public class ThucUongActivity extends AppCompatActivity {
                             anh = jsonObject.getString("anh");
                             tenLoai = jsonObject.getString("tenLoai");
                             count = 0;
-
 
                             listThucUong.add(new ThucUong(id, tenThucUong,gia,maLoai,anh,count, tenLoai));
 
