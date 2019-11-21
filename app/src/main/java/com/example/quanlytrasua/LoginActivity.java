@@ -18,23 +18,40 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.ultil.Server;
 import com.example.quanlytrasua.ultil.SessionManager;
+//import com.example.quanlytrasua.ultil.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+
+//import io.socket.client.IO;
+//import io.socket.client.Socket;
+//import io.socket.emitter.Emitter;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText txtTenDangNhap,txtMatKhau;
     private Button btnLogin;
+
     SessionManager sessionManager;
+    //Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+//        try {
+//            mSocket = IO.socket(Server.PORT);
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+        //initSocket();
+        //mSocket.on("SERVER_SEND_RESULT", onRetrieveLoginData);
 
         sessionManager = new SessionManager(this);
         txtTenDangNhap = findViewById(R.id.txtTenDangNhap);
@@ -47,14 +64,41 @@ public class LoginActivity extends AppCompatActivity {
                 String matKhau = txtMatKhau.getText().toString();
                 if(!tenDangNhap.isEmpty()|| !matKhau.isEmpty()){
                     Login(tenDangNhap, matKhau);
+                    //mSocket.emit("CLIENT_SEND_REQUEST_LOGIN", tenDangNhap+","+matKhau);
                 }
                 else{
                     txtTenDangNhap.setError("Vui lòng nhập tên đăng nhập");
                     txtMatKhau.setError("Vui lòng nhập mật khẩu");
                 }
+
             }
         });
     }
+//    private Emitter.Listener onRetrieveLoginData = new Emitter.Listener() {
+//        @Override
+//        public void call(final Object... args) {
+//
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    JSONArray data = (JSONArray) args[0];
+//                    if (data.length() == 0){
+//                        Toast.makeText(LoginActivity.this,"Sai tài khoản mật khẩu", Toast.LENGTH_LONG).show();
+//                    }
+//                    else{
+//                        Intent intent = new Intent(LoginActivity.this, DanhSachBanActivity.class);
+//                        //Toast.makeText(LoginActivity.this,data.length()+"", Toast.LENGTH_LONG).show();
+//                        startActivity(intent);
+//                        finish();
+//
+//                    }
+//                }
+//            });
+//        }
+//    };
+//    private void initSocket() {
+//        mSocket.connect();
+//    }
 
     private void Login(final String tenDangNhap, final String matKhau) {
 

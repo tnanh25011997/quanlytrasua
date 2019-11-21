@@ -25,7 +25,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiHoaDon;
 import com.example.quanlytrasua.FragmentApp.HienThiBanFragment;
-import com.example.quanlytrasua.Model.ModelMax;
 import com.example.quanlytrasua.Model.ThucUong;
 import com.example.quanlytrasua.ultil.Server;
 
@@ -237,7 +236,6 @@ public class HoaDonActivity extends AppCompatActivity {
             Thread.sleep(500);
             CapNhatTinhTrangBan(idBanchecking, 1);
             ThemVaoBangChiTietHoaDon(maHOADONCHECK);
-            //getMaxHoaDon();
         }catch (Exception e){
 
         }
@@ -272,40 +270,7 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
-    //    private void getMaxHoaDon(){
-//
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, Server.DuongDanMaxHoaDon, null,
-//                new Response.Listener<JSONArray>() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//
-//                        for(int i=0; i< response.length(); i++){
-//                            try {
-//                                JSONObject jsonObject = response.getJSONObject(i);
-//                                int a = jsonObject.getInt("max");
-//                                ThemVaoBangChiTietHoaDon(a);
-//
-//
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//
-//                    }
-//                }
-//        );
-//
-//        requestQueue.add(jsonArrayRequest);
-//
-//
-//
-//    }
+
     private void ThemVaoBangChiTietHoaDon(int maHoaDonCheck) {
         for(final ThucUong thucUong : listThucUong) {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -346,6 +311,7 @@ public class HoaDonActivity extends AppCompatActivity {
 
 
     private void ThemVaoBangHoaDon(int maHoaDonCheck) {
+        getTongBill();
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoHoaDon+maHoaDonCheck,
                 new Response.Listener<String>() {
@@ -465,7 +431,19 @@ public class HoaDonActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-                    tvTime.setText("Thời gian: "+thoigian);
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+                    String[] str = timeStamp.split("_");
+                    String[] str2 = str[0].split("");
+                    String year = str2[1]+str2[2]+str2[3]+str2[4];
+                    String month = str2[5]+str2[6];
+                    String day = str2[7]+str2[8];
+
+                    String[] str3 = str[1].split("");
+                    String hour = str3[1]+str3[2];
+                    String minute = str3[3]+str3[4];
+                    String sec = str3[5]+str3[6];
+                    tvTime.setText("Thời gian: "+day+"/"+month+"/"+year+"   "+hour+":"+minute+":"+sec);
+                    //tvTime.setText("Thời gian: "+thoigian);
                     tvTotalBill.setText("Tổng tiền: "+getTien(tongTien));
 
                     adapterHienThiHoaDon.notifyDataSetChanged();
