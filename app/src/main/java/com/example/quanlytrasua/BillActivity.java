@@ -29,8 +29,6 @@ import com.example.quanlytrasua.Model.LoaiThucUong;
 import com.example.quanlytrasua.Model.ThucUong;
 import com.example.quanlytrasua.ultil.Server;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +47,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class BillActivity extends AppCompatActivity {
-    private WebSocketClient mWebSocketClient;
+
     AdapterHienThiBill adapterHienThiBill;
     public static boolean CHECK_START_MENU = false;
     public static int CODE_CHECK = 1;
@@ -132,6 +130,7 @@ public class BillActivity extends AppCompatActivity {
             System.out.println("==============> chua co");
             addEvent();
             getData();
+            CHECK_START_MENU = false;
         }
 
     }

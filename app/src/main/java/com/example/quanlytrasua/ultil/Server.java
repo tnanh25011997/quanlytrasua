@@ -3,7 +3,7 @@ package com.example.quanlytrasua.ultil;
 public class Server {
 
 //    public static String localhost ="192.168.1.4";
-    public static String localhost = "192.168.1.9:8080";
+    public static String localhost = "192.168.1.19:8080";
     public static String DuongDanAnh = "http://"+localhost+"/quanlytrasua/image/";
     public static String DuongDanBan = "http://"+localhost+"/quanlytrasua/mvc/BanController/getListBan/";
     public static String DuongDanLogin = "http://"+localhost+"/quanlytrasua/mvc/UserController/checkLogin/";

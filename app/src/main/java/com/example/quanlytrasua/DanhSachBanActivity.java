@@ -21,6 +21,15 @@ import com.example.quanlytrasua.FragmentApp.HienThiBanFragment;
 import com.example.quanlytrasua.ultil.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 
 public class DanhSachBanActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -28,6 +37,7 @@ public class DanhSachBanActivity extends AppCompatActivity implements Navigation
     NavigationView navigationView;
     Toolbar toolbar;
     ActionBarDrawerToggle mToggle;
+    private Socket socket;
 
     SessionManager sessionManager;
     TextView name;
@@ -41,7 +51,6 @@ public class DanhSachBanActivity extends AppCompatActivity implements Navigation
         AddControl();
 
     }
-
 
     private void AddControl() {
         drawerLayout = findViewById(R.id.draw_layout);

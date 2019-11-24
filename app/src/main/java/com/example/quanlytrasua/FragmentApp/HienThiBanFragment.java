@@ -19,6 +19,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.BillActivity;
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiBan;
+import com.example.quanlytrasua.DanhSachBanActivity;
 import com.example.quanlytrasua.HoaDonActivity;
 import com.example.quanlytrasua.Model.BanDTO;
 import com.example.quanlytrasua.R;
@@ -29,10 +30,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 public class HienThiBanFragment extends Fragment {
+
+    private Socket socket;
     GridView gvHienThiBan;
     List<BanDTO> banDTOList;
     AdapterHienThiBan adapterHienThiBan;
@@ -42,12 +50,14 @@ public class HienThiBanFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.layout_hienthiban,container,false);
         gvHienThiBan = view.findViewById(R.id.gvHienThiBan);
         banDTOList = new ArrayList<BanDTO>();
-        adapterHienThiBan = new AdapterHienThiBan(getActivity(), R.layout.custom_layout_hienthiban, banDTOList);
-        gvHienThiBan.setAdapter(adapterHienThiBan);
-        GetDuLieuBan();
+        banDTOList.clear();
+        //GetDuLieuBan();
+        addSocket();
+
         gvHienThiBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -79,7 +89,50 @@ public class HienThiBanFragment extends Fragment {
 
     }
 
+    private void addSocket() {
+        System.out.println("==========>He");
+        try {
+            socket = IO.socket("http://192.168.1.19:3000/");
 
+
+        }catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        socket.connect();
+        socket.on("call", onReciveNhan);
+        socket.emit("REQUEST_TABLE",-1);
+        socket.on("SERVER_SEND_LIST_TABLE",onReciveNhan);
+
+    }
+    private Emitter.Listener onReciveNhan = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONArray jsonArray = (JSONArray) args[0];
+                    System.out.println(jsonArray.length() +" ------------> LENGHT");
+                    banDTOList.clear();
+                    for (int i=0;i<jsonArray.length();i++){
+                        try {
+                            JSONObject ob = (JSONObject) jsonArray.get(i);
+                            int ma = ob.getInt("id");
+                            String tenban  = ob.getString("TenBan");
+                            int tinhtrang = ob.getInt("TinhTrang");
+                            BanDTO ban = new BanDTO(ma,tenban,tinhtrang);
+                            banDTOList.add(ban);
+                            System.out.println("=>>>>>>>>>>> "+ob.getString("TenBan"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    adapterHienThiBan = new AdapterHienThiBan(getActivity(), R.layout.custom_layout_hienthiban, banDTOList);
+                    gvHienThiBan.setAdapter(adapterHienThiBan);
+                }
+            });
+        }
+    };
 
     private void GetDuLieuBan() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
