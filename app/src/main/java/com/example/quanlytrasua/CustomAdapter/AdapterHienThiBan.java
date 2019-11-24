@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.quanlytrasua.FragmentApp.HienThiBanFragment;
+//import com.example.quanlytrasua.FragmentApp.HienThiBanFragment;
 import com.example.quanlytrasua.Model.BanDTO;
 import com.example.quanlytrasua.R;
 

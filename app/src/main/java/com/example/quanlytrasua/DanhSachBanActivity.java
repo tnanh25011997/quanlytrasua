@@ -52,10 +52,6 @@ public class DanhSachBanActivity extends AppCompatActivity implements Navigation
         toolbar = findViewById(R.id.toolbar);
 
         name = findViewById(R.id.tenUser);
-        Intent intent = getIntent();
-        String extraName =  intent.getStringExtra("fullname");
-        //name.setText(extraName);
-        toolbar.setTitle("Hello "+extraName);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -80,6 +76,9 @@ public class DanhSachBanActivity extends AppCompatActivity implements Navigation
         }
         if(id == R.id.menudangxuat){
             sessionManager.logout();
+//            Intent intent = new Intent(DanhSachBanActivity.this, LoginActivity.class);
+//            startActivity(intent);
+//            finish();
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
