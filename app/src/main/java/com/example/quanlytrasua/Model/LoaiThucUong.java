@@ -10,6 +10,9 @@ public class LoaiThucUong {
         this.tenLoai = tenLoai;
     }
 
+    public LoaiThucUong() {
+    }
+
     public int getId() {
         return id;
     }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1059679043543",
+    "firebase_url": "https://appqltrasua-cbf2d.firebaseio.com",
+    "project_id": "appqltrasua-cbf2d",
+    "storage_bucket": "appqltrasua-cbf2d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059679043543:android:4511127e516b324bb59592",
+        "android_client_info": {
+          "package_name": "com.example.quanlytrasua"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059679043543-aek9ip1rnv6d0lq3ao0djco0e9bseion.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBT1ZKQO9fOlT0bZAqfvAS44JqpBZtS8I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059679043543-aek9ip1rnv6d0lq3ao0djco0e9bseion.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

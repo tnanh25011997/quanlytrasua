@@ -1,5 +1,6 @@
 package com.example.quanlytrasua;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,10 +26,18 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiHoaDon;
 import com.example.quanlytrasua.FragmentApp.HienThiBanFragment;
+import com.example.quanlytrasua.Model.BanDTO;
+import com.example.quanlytrasua.Model.HoaDon2;
 import com.example.quanlytrasua.Model.ThucUong;
+import com.example.quanlytrasua.Model.chitiethoadon;
 import com.example.quanlytrasua.ultil.Server;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +53,7 @@ import java.util.Map;
 public class HoaDonActivity extends AppCompatActivity {
 
     public static boolean CHECK_START_MENU = false;
-
+    DatabaseReference mDatabase;
     //Socket mSocket;
     ArrayList<ThucUong> listThucUongchecked;
     private TextView tvTable;
@@ -63,13 +72,14 @@ public class HoaDonActivity extends AppCompatActivity {
     private ImageView imgRefresh;
     private int idBanchecking;
     long tongTien = 0;
-    int maHOADONCHECK = 0;
+    String maHOADONCHECK = "";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hoa_don);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 //        try {
 //            mSocket = IO.socket(Server.PORT);
 //        } catch (URISyntaxException e) {
@@ -101,6 +111,7 @@ public class HoaDonActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         tongTien = 0;
+        adapterHienThiHoaDon.notifyDataSetChanged();
         super.onStop();
     }
 
@@ -178,7 +189,7 @@ public class HoaDonActivity extends AppCompatActivity {
     }
 
     private void ThanhToan() {
-        if(maHOADONCHECK == 0){
+        if(maHOADONCHECK.equals("")){
             Toast.makeText(HoaDonActivity.this, "Chưa có Hóa đơn nào được lưu!", Toast.LENGTH_LONG).show();
         }else{
             CapNhatTinhTrangBan(Integer.parseInt(table),0);
@@ -191,7 +202,7 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
-    private void UpdateTinhTrangHoaDon(final int maHoaDonCheck) {
+    private void UpdateTinhTrangHoaDon(final String maHoaDonCheck) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanCapNhatTrangThaiHoaDon,
                 new Response.Listener<String>() {
@@ -249,10 +260,10 @@ public class HoaDonActivity extends AppCompatActivity {
     private void LuuHoaDon() {
         try {
             XoaHetChiTietCu(maHOADONCHECK);
+            Thread.sleep(500);
             ThemVaoBangHoaDon(maHOADONCHECK);
             Thread.sleep(500);
             CapNhatTinhTrangBan(idBanchecking, 1);
-
             ThemVaoBangChiTietHoaDon(maHOADONCHECK);
         }catch (Exception e){
 
@@ -261,148 +272,218 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
-    private void XoaHetChiTietCu(final int maHoaDonCheck) {
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanXoaCTHD,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("mahoadon", String.valueOf(maHoaDonCheck));
-                return params;
-            }
-        };
-        requestQueue.add(stringRequest);
-//            String query ="DELETE FROM chitiethoadon WHERE MaHoaDon="+maHoaDonCheck;
-//            mSocket.emit("CLIENT_SEND_REQUEST_DELETE_CT", query);
-
-    }
-
-
-    private void ThemVaoBangChiTietHoaDon(int maHoaDonCheck) {
-        for(final ThucUong thucUong : listThucUong) {
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoCTHoaDon+maHoaDonCheck,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            if (response.trim().equals("success")) {
-
-                                Toast.makeText(HoaDonActivity.this, "Đã thêm chi hóa đơn", Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật chi tiết hóa đơn", Toast.LENGTH_LONG).show();
-
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-
-                        }
-                    }
-            ) {
+    private void XoaHetChiTietCu(final String maHoaDonCheck) {
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanXoaCTHD,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                    }
+//                }
+//        ){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                params.put("mahoadon", String.valueOf(maHoaDonCheck));
+//                return params;
+//            }
+//        };
+//        requestQueue.add(stringRequest);
+        if(!maHoaDonCheck.equals("")) {
+            mDatabase.child("chitiethoadon").addChildEventListener(new ChildEventListener() {
                 @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-
-                    params.put("mathucuong", String.valueOf(thucUong.getId()));
-                    params.put("soluong", String.valueOf(thucUong.getCount()));
-                    //params.put("mahoadon",String.valueOf(maHoaDon));
-
-                    return params;
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    chitiethoadon ct = dataSnapshot.getValue(chitiethoadon.class);
+                    if(ct.getMaHoaDon().equals(maHoaDonCheck)){
+                        mDatabase.child("chitiethoadon").child(dataSnapshot.getKey()).removeValue();
+                    }
                 }
-            };
-            requestQueue.add(stringRequest);
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
+
+
     }
 
 
-    private void ThemVaoBangHoaDon(int maHoaDonCheck) {
-        getTongBill();
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoHoaDon+maHoaDonCheck,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if(response.trim().equals("success")){
-
-
-                        }
-                        else{
-                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật hóa đơn",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("maban", String.valueOf(idBanchecking));
-                params.put("thanhtien", String.valueOf(tongTien));
-                return params;
-            }
-        };
-        requestQueue.add(stringRequest);
-//        if(maHoaDonCheck == 0){
-//            String query = "INSERT INTO hoadon(MaBan,NgayTao,ThanhTien,TinhTrang) VALUES('"+String.valueOf(idBanchecking)+"'," +
-//                    "'2016-10-10',"+tongTien+",0)";
-//            mSocket.emit("CLIENT_SEND_REQUEST_INSERT_HD", query);
-//        }else {
-//            String query = "UPDATE hoadon SET ThanhTien = "+tongTien+"  WHERE id="+maHoaDonCheck;
-//            mSocket.emit("CLIENT_SEND_REQUEST_INSERT_HD", query);
+    private void ThemVaoBangChiTietHoaDon(String maHoaDonCheck) {
+//        for(final ThucUong thucUong : listThucUong) {
+//            RequestQueue requestQueue = Volley.newRequestQueue(this);
+//            StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoCTHoaDon+maHoaDonCheck,
+//                    new Response.Listener<String>() {
+//                        @Override
+//                        public void onResponse(String response) {
+//                            if (response.trim().equals("success")) {
+//
+//                                Toast.makeText(HoaDonActivity.this, "Đã thêm chi hóa đơn", Toast.LENGTH_LONG).show();
+//                            } else {
+//                                Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật chi tiết hóa đơn", Toast.LENGTH_LONG).show();
+//
+//                            }
+//                        }
+//                    },
+//                    new Response.ErrorListener() {
+//                        @Override
+//                        public void onErrorResponse(VolleyError error) {
+//
+//                        }
+//                    }
+//            ) {
+//                @Override
+//                protected Map<String, String> getParams() throws AuthFailureError {
+//                    Map<String, String> params = new HashMap<>();
+//
+//                    params.put("mathucuong", String.valueOf(thucUong.getId()));
+//                    params.put("soluong", String.valueOf(thucUong.getCount()));
+//                    //params.put("mahoadon",String.valueOf(maHoaDon));
+//
+//                    return params;
+//                }
+//            };
+//            requestQueue.add(stringRequest);
 //        }
     }
 
-    private void CapNhatTinhTrangBan(int idBan, final int tinhTrang) {
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanCapNhatBan+idBan,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if(response.trim().equals("success")){
 
-                        }
-                        else{
-                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật bàn",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(HoaDonActivity.this, "Lỗi server",Toast.LENGTH_LONG).show();
+    private void ThemVaoBangHoaDon(String maHoaDonCheck) {
+        getTongBill();
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoHoaDon+maHoaDonCheck,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        if(response.trim().equals("success")){
+//
+//
+//                        }
+//                        else{
+//                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật hóa đơn",Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                    }
+//                }
+//        ){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                params.put("maban", String.valueOf(idBanchecking));
+//                params.put("thanhtien", String.valueOf(tongTien));
+//                return params;
+//            }
+//        };
+//        requestQueue.add(stringRequest);
+          if(maHoaDonCheck.equals("")){
+              String mGroupId = mDatabase.push().getKey();
+              //String id, int maBan, String ngayTao, int tinhTrang, long thanhTien
+              mDatabase.child("hoadon").child(mGroupId).setValue(new HoaDon2(mGroupId,idBanchecking, "2019-10-10",0,tongTien));
+              for(ThucUong thucUong : listThucUong){
+                  //String id, String maHoaDon, String maThucUong, int soLuong
+                  String idct = mDatabase.push().getKey();
+                  mDatabase.child("chitiethoadon").child(idct).setValue(new chitiethoadon(idct,mGroupId,thucUong.getId(),thucUong.getCount()));
+              }
+          }else{
+
+
+              mDatabase.child("hoadon").child(maHoaDonCheck).setValue(new HoaDon2(maHoaDonCheck,Integer.parseInt(table), "2019-10-10",0,tongTien));
+              for(ThucUong thucUong : listThucUong){
+                  //String id, String maHoaDon, String maThucUong, int soLuong
+                  String idct = mDatabase.push().getKey();
+                  mDatabase.child("chitiethoadon").child(idct).setValue(new chitiethoadon(idct,maHoaDonCheck,thucUong.getId(),thucUong.getCount()));
+              }
+          }
+
+
+    }
+
+    private void CapNhatTinhTrangBan(int idBan, final int tinhTrang) {
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanCapNhatBan+idBan,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        if(response.trim().equals("success")){
+//
+//                        }
+//                        else{
+//                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật bàn",Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(HoaDonActivity.this, "Lỗi server",Toast.LENGTH_LONG).show();
+//                    }
+//                }
+//        ){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                params.put("tinhTrang", String.valueOf(tinhTrang));
+//                return params;
+//            }
+//        };
+//        requestQueue.add(stringRequest);
+            mDatabase.child("Ban").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    BanDTO ban = dataSnapshot.getValue(BanDTO.class);
+                    if(ban.getMaBan()== idBanchecking){
+                        mDatabase.child("Ban").child(dataSnapshot.getKey()).setValue(new BanDTO(idBanchecking,ban.getTenBan(),1));
                     }
                 }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("tinhTrang", String.valueOf(tinhTrang));
-                return params;
-            }
-        };
-        requestQueue.add(stringRequest);
-//        String query="UPDATE ban SET TinhTrang = "+tinhTrang+" WHERE id ="+idBan;
-//        mSocket.emit("CLIENT_SEND_REQUEST_UPDATE_TTBAN", query);
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
     }
 
     private void LayDuLieuBanCoNguoi() {
@@ -434,58 +515,153 @@ public class HoaDonActivity extends AppCompatActivity {
     }
     private void TaoViewBanCoNguoi() {
 
-        tvTable.setText("Bàn "+table);
+//        tvTable.setText("Bàn "+table);
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanGetDataBan + table, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                if(response !=null){
+//                    for(int i=0; i<response.length(); i++){
+//
+//                        try {
+//                            JSONObject jsonObject = response.getJSONObject(i);
+//                            String id_thucuong = jsonObject.getString("id_thucuong");
+//                            String tenThucUong = jsonObject.getString("tenthucuong");
+//                            long gia = jsonObject.getLong("gia");
+//                            int maLoai = jsonObject.getInt("maloai");
+//                            String anh = jsonObject.getString("anh");
+//                            String tenLoai = jsonObject.getString("tenloai");
+//                            int count = jsonObject.getInt("soluong");;
+//                            listThucUong.add(new ThucUong(id_thucuong, tenThucUong,gia,maLoai,anh,count ,tenLoai));
+//                            tongTien = jsonObject.getLong("thanhtien");
+//                            thoigian = jsonObject.getString("ngaytao");
+//                            maHOADONCHECK = jsonObject.getInt("id_hoadon");
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+//                    String[] str = timeStamp.split("_");
+//                    String[] str2 = str[0].split("");
+//                    String year = str2[1]+str2[2]+str2[3]+str2[4];
+//                    String month = str2[5]+str2[6];
+//                    String day = str2[7]+str2[8];
+//
+//                    String[] str3 = str[1].split("");
+//                    String hour = str3[1]+str3[2];
+//                    String minute = str3[3]+str3[4];
+//                    String sec = str3[5]+str3[6];
+//                    tvTime.setText("Thời gian: "+day+"/"+month+"/"+year+"   "+hour+":"+minute+":"+sec);
+//                    //tvTime.setText("Thời gian: "+thoigian);
+//                    tvTotalBill.setText("Tổng tiền: "+getTien(tongTien));
+//
+//                    adapterHienThiHoaDon.notifyDataSetChanged();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+//        requestQueue.add(jsonArrayRequest);
+          mDatabase.child("hoadon").addChildEventListener(new ChildEventListener() {
+              @Override
+              public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                  HoaDon2 hd = dataSnapshot.getValue(HoaDon2.class);
+                  hd.setId(dataSnapshot.getKey());
+                  if(table.equals(String.valueOf(hd.getMaBan()))&& hd.getTinhTrang()==0){
+                      maHOADONCHECK = dataSnapshot.getKey();
+                      tongTien = hd.getThanhTien();
+                      thoigian = hd.getNgayTao();
+                      tvTime.setText("Thời gian: "+thoigian);
+                      tvTotalBill.setText("Tổng tiền: "+ tongTien);
+                  }
+              }
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanGetDataBan + table, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                if(response !=null){
-                    for(int i=0; i<response.length(); i++){
+              @Override
+              public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                        try {
-                            JSONObject jsonObject = response.getJSONObject(i);
-                            int id_thucuong = jsonObject.getInt("id_thucuong");
-                            String tenThucUong = jsonObject.getString("tenthucuong");
-                            long gia = jsonObject.getLong("gia");
-                            int maLoai = jsonObject.getInt("maloai");
-                            String anh = jsonObject.getString("anh");
-                            String tenLoai = jsonObject.getString("tenloai");
-                            int count = jsonObject.getInt("soluong");;
-                            listThucUong.add(new ThucUong(id_thucuong, tenThucUong,gia,maLoai,anh,count ,tenLoai));
-                            tongTien = jsonObject.getLong("thanhtien");
-                            thoigian = jsonObject.getString("ngaytao");
-                            maHOADONCHECK = jsonObject.getInt("id_hoadon");
+              }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-                    String[] str = timeStamp.split("_");
-                    String[] str2 = str[0].split("");
-                    String year = str2[1]+str2[2]+str2[3]+str2[4];
-                    String month = str2[5]+str2[6];
-                    String day = str2[7]+str2[8];
+              @Override
+              public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-                    String[] str3 = str[1].split("");
-                    String hour = str3[1]+str3[2];
-                    String minute = str3[3]+str3[4];
-                    String sec = str3[5]+str3[6];
-                    tvTime.setText("Thời gian: "+day+"/"+month+"/"+year+"   "+hour+":"+minute+":"+sec);
-                    //tvTime.setText("Thời gian: "+thoigian);
-                    tvTotalBill.setText("Tổng tiền: "+getTien(tongTien));
+              }
 
-                    adapterHienThiHoaDon.notifyDataSetChanged();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+              @Override
+              public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-            }
-        });
-        requestQueue.add(jsonArrayRequest);
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+
+              }
+          });
+          mDatabase.child("chitiethoadon").addChildEventListener(new ChildEventListener() {
+              @Override
+              public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                  final chitiethoadon ct = dataSnapshot.getValue(chitiethoadon.class);
+                  ct.setId(dataSnapshot.getKey());
+                  if(ct.getMaHoaDon().equals(maHOADONCHECK)){
+                      mDatabase.child("thucuong").addChildEventListener(new ChildEventListener() {
+                          @Override
+                          public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                              ThucUong thucUong = dataSnapshot.getValue(ThucUong.class);
+                              thucUong.setId(dataSnapshot.getKey());
+                              thucUong.setCount(ct.getSoLuong());
+                              if(thucUong.getId().equals(ct.getMaThucUong())){
+                                  listThucUong.add(thucUong);
+                              }
+                              adapterHienThiHoaDon.notifyDataSetChanged();
+                          }
+
+                          @Override
+                          public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                          }
+
+                          @Override
+                          public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                          }
+
+                          @Override
+                          public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                          }
+
+                          @Override
+                          public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                          }
+                      });
+                  }
+              }
+
+              @Override
+              public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+              }
+
+              @Override
+              public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+              }
+
+              @Override
+              public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+
+              }
+          });
 
 
     }

@@ -13,7 +13,7 @@ import android.widget.GridView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -30,6 +30,11 @@ import com.example.quanlytrasua.ultil.Server;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 import org.json.JSONArray;
@@ -51,14 +56,15 @@ public class HienThiBanFragment extends Fragment {
     int id = 0;
     String tenBan = "";
     int tinhTrang = 0;
-    Socket mSocket;
-    {
-        try {
-            mSocket = IO.socket(Server.PORT);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
+//    Socket mSocket;
+//    {
+//        try {
+//            mSocket = IO.socket(Server.PORT);
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    DatabaseReference mData;
 
 
     @Nullable
@@ -75,8 +81,7 @@ public class HienThiBanFragment extends Fragment {
 //            e.printStackTrace();
 //        }
 
-
-
+        mData = FirebaseDatabase.getInstance().getReference();
         banDTOList = new ArrayList<BanDTO>();
         adapterHienThiBan = new AdapterHienThiBan(getActivity(), R.layout.custom_layout_hienthiban, banDTOList);
         gvHienThiBan.setAdapter(adapterHienThiBan);
@@ -122,33 +127,70 @@ public class HienThiBanFragment extends Fragment {
     }
 
     private void GetDuLieuBan() {
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanBan, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                if(response !=null){
-                    for(int i=0; i<response.length(); i++){
+//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanBan, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                if(response !=null){
+//                    for(int i=0; i<response.length(); i++){
+//
+//                        try {
+//                            JSONObject jsonObject = response.getJSONObject(i);
+//                            id = jsonObject.getInt("ID");
+//                            tenBan = jsonObject.getString("TenBan");
+//                            tinhTrang = jsonObject.getInt("TinhTrang");
+//                            banDTOList.add(new BanDTO(id,tenBan, tinhTrang));
+//                            adapterHienThiBan.notifyDataSetChanged();
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+//        requestQueue.add(jsonArrayRequest);
 
-                        try {
-                            JSONObject jsonObject = response.getJSONObject(i);
-                            id = jsonObject.getInt("ID");
-                            tenBan = jsonObject.getString("TenBan");
-                            tinhTrang = jsonObject.getInt("TinhTrang");
-                            banDTOList.add(new BanDTO(id,tenBan, tinhTrang));
-                            adapterHienThiBan.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+        mData.child("Ban").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                BanDTO ban = dataSnapshot.getValue(BanDTO.class);
+                //ban.setMaBan(dataSnapshot.getKey());
+                banDTOList.add(ban);
+                adapterHienThiBan.notifyDataSetChanged();
+        }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                BanDTO ban = dataSnapshot.getValue(BanDTO.class);
+                for(BanDTO b : banDTOList){
+                    if(ban.getMaBan()==b.getMaBan()){
+                        b.setTenBan(ban.getTenBan());
+                        b.setTinhTrang(ban.getTinhTrang());
                     }
                 }
+                adapterHienThiBan.notifyDataSetChanged();
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-        requestQueue.add(jsonArrayRequest);
     }
 
 

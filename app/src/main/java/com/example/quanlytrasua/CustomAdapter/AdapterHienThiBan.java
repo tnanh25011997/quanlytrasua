@@ -70,7 +70,7 @@ public class AdapterHienThiBan extends BaseAdapter {
         BanDTO banDTO = banDTOList.get(i);
         viewHolderBan.txtTenBan.setText(banDTO.getTenBan());
         if(banDTO.getTinhTrang() == 1){
-
+            viewHolderBan.ivBan.setImageResource(R.drawable.table);
         }
         else{
             viewHolderBan.ivBan.setImageResource(R.drawable.table_trong);

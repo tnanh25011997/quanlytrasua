@@ -3,7 +3,7 @@ package com.example.quanlytrasua.Model;
 import java.io.Serializable;
 
 public class ThucUong implements Serializable {
-    private int id;
+    private String id;
     private String tenThucUong;
     private long gia;
     private int maLoai;
@@ -11,13 +11,16 @@ public class ThucUong implements Serializable {
     private int count=0;
     private String tenLoai;
 
+    public ThucUong() {
+    }
+
     public ThucUong(String tenThucUong, long gia, int count) {
         this.tenThucUong = tenThucUong;
         this.gia = gia;
         this.count = count;
     }
 
-    public ThucUong(int id_thucuong, String tenthucuong, long gia, int maloai, String anh, int soluong, String tenloai) {
+    public ThucUong(String id_thucuong, String tenthucuong, long gia, int maloai, String anh, int soluong, String tenloai) {
         this.id = id_thucuong;
         this.tenThucUong = tenthucuong;
         this.gia = gia;
@@ -27,7 +30,7 @@ public class ThucUong implements Serializable {
         this.tenLoai = tenloai;
     }
 
-    public ThucUong(int id, String tenThucUong, long gia, int maLoai, String anh, String tenLoai) {
+    public ThucUong(String id, String tenThucUong, long gia, int maLoai, String anh, String tenLoai) {
         this.id = id;
         this.tenThucUong = tenThucUong;
         this.gia = gia;
@@ -37,11 +40,11 @@ public class ThucUong implements Serializable {
         this.tenLoai = tenLoai;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

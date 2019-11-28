@@ -1,5 +1,7 @@
 package com.example.quanlytrasua;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -29,6 +31,11 @@ import com.example.quanlytrasua.Model.BanDTO;
 import com.example.quanlytrasua.Model.LoaiThucUong;
 import com.example.quanlytrasua.Model.ThucUong;
 import com.example.quanlytrasua.ultil.Server;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +56,7 @@ public class ThucUongActivity extends AppCompatActivity {
 
     private  int idLoai;
     private String tenLoaiThucUong;
-
+    DatabaseReference mData;
     private int id;
     private String tenThucUong;
     private long gia;
@@ -64,6 +71,7 @@ public class ThucUongActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thuc_uong);
+        mData = FirebaseDatabase.getInstance().getReference();
         Intent intent = getIntent();
         maBanChecked = intent.getStringExtra("table");
         AddControl();
@@ -97,8 +105,7 @@ public class ThucUongActivity extends AppCompatActivity {
                     //do nothing
                 }
                 else{
-                    //String item = adapterView.getItemAtPosition(i).toString();
-                    //Toast.makeText(adapterView.getContext(),"selected "+item,Toast.LENGTH_LONG).show();
+
                     ArrayList<ThucUong> arr = new ArrayList<>();
                     for (int j = 0; j<listThucUong.size(); j++)
                     {
@@ -160,68 +167,126 @@ public class ThucUongActivity extends AppCompatActivity {
     }
 
     private void getDuLieuLoaiThucUong() {
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanLoaiThucUong, new Response.Listener<JSONArray>() {
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanLoaiThucUong, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                if(response !=null){
+//                    for(int i=0; i<response.length(); i++){
+//
+//                        try {
+//                            JSONObject jsonObject = response.getJSONObject(i);
+//                            idLoai = jsonObject.getInt("id");
+//                            tenLoaiThucUong = jsonObject.getString("tenLoai");
+//
+//                            arrItemSpinner.add(tenLoaiThucUong);
+//                            listLoaiThucUong.add(new LoaiThucUong(idLoai,tenLoaiThucUong));
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+//        requestQueue.add(jsonArrayRequest);
+
+        mData.child("loaithucuong").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onResponse(JSONArray response) {
-                if(response !=null){
-                    for(int i=0; i<response.length(); i++){
-
-                        try {
-                            JSONObject jsonObject = response.getJSONObject(i);
-                            idLoai = jsonObject.getInt("id");
-                            tenLoaiThucUong = jsonObject.getString("tenLoai");
-
-                            arrItemSpinner.add(tenLoaiThucUong);
-                            listLoaiThucUong.add(new LoaiThucUong(idLoai,tenLoaiThucUong));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                LoaiThucUong loai = dataSnapshot.getValue(LoaiThucUong.class);
+                arrItemSpinner.add(loai.getTenLoai());
+                listLoaiThucUong.add(loai);
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-        requestQueue.add(jsonArrayRequest);
     }
 
     private void getDuLieuThucUong() {
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanThucUong, new Response.Listener<JSONArray>() {
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanThucUong, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                if(response !=null){
+//                    for(int i=0; i<response.length(); i++){
+//
+//                        try {
+//                            JSONObject jsonObject = response.getJSONObject(i);
+//                            id = jsonObject.getInt("id");
+//                            tenThucUong = jsonObject.getString("tenThucUong");
+//                            gia = jsonObject.getLong("gia");
+//                            maLoai = jsonObject.getInt("maLoai");
+//                            anh = jsonObject.getString("anh");
+//                            tenLoai = jsonObject.getString("tenLoai");
+//                            count = 0;
+//                            listThucUong.add(new ThucUong(id, tenThucUong,gia,maLoai,anh, tenLoai));
+//
+//                            adapterHienThiThucUong.notifyDataSetChanged();
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+//        requestQueue.add(jsonArrayRequest);
+        mData.child("thucuong").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onResponse(JSONArray response) {
-                if(response !=null){
-                    for(int i=0; i<response.length(); i++){
-
-                        try {
-                            JSONObject jsonObject = response.getJSONObject(i);
-                            id = jsonObject.getInt("id");
-                            tenThucUong = jsonObject.getString("tenThucUong");
-                            gia = jsonObject.getLong("gia");
-                            maLoai = jsonObject.getInt("maLoai");
-                            anh = jsonObject.getString("anh");
-                            tenLoai = jsonObject.getString("tenLoai");
-                            count = 0;
-                            listThucUong.add(new ThucUong(id, tenThucUong,gia,maLoai,anh, tenLoai));
-
-                            adapterHienThiThucUong.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                ThucUong thucUong = dataSnapshot.getValue(ThucUong.class);
+                thucUong.setId(dataSnapshot.getKey());
+                listThucUong.add(thucUong);
+                adapterHienThiThucUong.notifyDataSetChanged();
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-        requestQueue.add(jsonArrayRequest);
     }
 
     private void AddControl() {

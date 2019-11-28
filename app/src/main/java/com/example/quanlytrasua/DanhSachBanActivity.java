@@ -75,9 +75,6 @@ public class DanhSachBanActivity extends AppCompatActivity implements Navigation
 
         if(id == R.id.menudangxuat){
             sessionManager.logout();
-//            Intent intent = new Intent(DanhSachBanActivity.this, LoginActivity.class);
-//            startActivity(intent);
-//            finish();
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

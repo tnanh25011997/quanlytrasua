@@ -34,4 +34,7 @@ public class BanDTO {
         this.tenBan = tenBan;
         this.tinhTrang = tinhTrang;
     }
+
+    public BanDTO() {
+    }
 }
