@@ -4,15 +4,23 @@
 
         <item android:title="Danh sách bàn"
             android:id="@+id/menudanhsachban"
-            android:icon="@drawable/ic_user"
+            android:icon="@drawable/meeting"
+            android:checked="true"
+            >
+
+        </item>
+        <item android:title="Thống kê"
+            android:id="@+id/menuthongke"
+            android:icon="@drawable/statistics"
             android:checked="true"
             >
 
         </item>
         <item android:title="Đăng Xuất"
             android:id="@+id/menudangxuat"
-            android:icon="@drawable/ic_user">
+            android:icon="@drawable/logout">
 
         </item>
+
     </group>
 </menu>

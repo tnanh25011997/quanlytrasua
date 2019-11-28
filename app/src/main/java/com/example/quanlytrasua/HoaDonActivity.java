@@ -27,11 +27,14 @@ import com.example.quanlytrasua.CustomAdapter.AdapterHienThiHoaDon;
 import com.example.quanlytrasua.FragmentApp.HienThiBanFragment;
 import com.example.quanlytrasua.Model.ThucUong;
 import com.example.quanlytrasua.ultil.Server;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +44,8 @@ import java.util.Map;
 public class HoaDonActivity extends AppCompatActivity {
 
     public static boolean CHECK_START_MENU = false;
+
+    //Socket mSocket;
     ArrayList<ThucUong> listThucUongchecked;
     private TextView tvTable;
     private TextView tvTime;
@@ -65,7 +70,17 @@ public class HoaDonActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hoa_don);
-
+//        try {
+//            mSocket = IO.socket(Server.PORT);
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//        mSocket.connect();
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         AddControl();
         AddEvent();
 
@@ -220,7 +235,9 @@ public class HoaDonActivity extends AppCompatActivity {
                 Intent intent = new Intent(HoaDonActivity.this, DanhSachBanActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                //mSocket.emit("CLIENT_REQUEST_LIST_TABLE","1");
                 finish();
+
 
             }
         });
@@ -234,6 +251,7 @@ public class HoaDonActivity extends AppCompatActivity {
             ThemVaoBangHoaDon(maHOADONCHECK);
             Thread.sleep(500);
             CapNhatTinhTrangBan(idBanchecking, 1);
+
             ThemVaoBangChiTietHoaDon(maHOADONCHECK);
         }catch (Exception e){
 
@@ -266,6 +284,8 @@ public class HoaDonActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(stringRequest);
+//            String query ="DELETE FROM chitiethoadon WHERE MaHoaDon="+maHoaDonCheck;
+//            mSocket.emit("CLIENT_SEND_REQUEST_DELETE_CT", query);
 
     }
 
@@ -341,6 +361,14 @@ public class HoaDonActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(stringRequest);
+//        if(maHoaDonCheck == 0){
+//            String query = "INSERT INTO hoadon(MaBan,NgayTao,ThanhTien,TinhTrang) VALUES('"+String.valueOf(idBanchecking)+"'," +
+//                    "'2016-10-10',"+tongTien+",0)";
+//            mSocket.emit("CLIENT_SEND_REQUEST_INSERT_HD", query);
+//        }else {
+//            String query = "UPDATE hoadon SET ThanhTien = "+tongTien+"  WHERE id="+maHoaDonCheck;
+//            mSocket.emit("CLIENT_SEND_REQUEST_INSERT_HD", query);
+//        }
     }
 
     private void CapNhatTinhTrangBan(int idBan, final int tinhTrang) {
@@ -372,6 +400,8 @@ public class HoaDonActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(stringRequest);
+//        String query="UPDATE ban SET TinhTrang = "+tinhTrang+" WHERE id ="+idBan;
+//        mSocket.emit("CLIENT_SEND_REQUEST_UPDATE_TTBAN", query);
     }
 
     private void LayDuLieuBanCoNguoi() {

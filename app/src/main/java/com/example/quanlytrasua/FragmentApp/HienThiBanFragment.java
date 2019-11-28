@@ -52,6 +52,13 @@ public class HienThiBanFragment extends Fragment {
     String tenBan = "";
     int tinhTrang = 0;
     Socket mSocket;
+    {
+        try {
+            mSocket = IO.socket(Server.PORT);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Nullable
@@ -59,20 +66,24 @@ public class HienThiBanFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_hienthiban,container,false);
         gvHienThiBan = view.findViewById(R.id.gvHienThiBan);
+
+//        mSocket.on("SERVER_SEND_LIST_TABLE", onRetrieveTableData);
+//        mSocket.connect();
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+
+
         banDTOList = new ArrayList<BanDTO>();
-        try {
-            mSocket = IO.socket(Server.PORT);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        mSocket.connect();
-
-
         adapterHienThiBan = new AdapterHienThiBan(getActivity(), R.layout.custom_layout_hienthiban, banDTOList);
         gvHienThiBan.setAdapter(adapterHienThiBan);
-        //GetDuLieuBan();
-        mSocket.on("SERVER_SEND_LIST_TABLE", onRetrieveTableData);
-        mSocket.emit("CLIENT_REQUEST_LIST_TABLE","1");
+        adapterHienThiBan.notifyDataSetChanged();
+        GetDuLieuBan();
+        //mSocket.emit("CLIENT_REQUEST_LIST_TABLE","1");
+
         gvHienThiBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -84,6 +95,7 @@ public class HienThiBanFragment extends Fragment {
                         int maBan = table.getMaBan();
                         if (check == 0)
                         {
+
                             HienThiBanFragment.CHECK_TABLE = false;
                             Intent intent = new Intent(getActivity(), ThucUongActivity.class);
                             intent.putExtra("table",maBan+"");
@@ -148,6 +160,7 @@ public class HienThiBanFragment extends Fragment {
                 @Override
                 public void run() {
                     JSONArray data = (JSONArray) args[0];
+
                     banDTOList.clear();
                     for (int i=0; i<data.length(); i++)
                     {
