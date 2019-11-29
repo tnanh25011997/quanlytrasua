@@ -47,7 +47,7 @@
                 android:layout_marginBottom="15dp"
                 android:background="@color/colorWhite"
                 android:drawableLeft="@drawable/ic_user"
-                android:text="tnanh25011997@gmail.com"
+                android:text="vantuankrn197@gmail.com"
                 android:drawablePadding="10dp"
                 android:hint="@string/tendangnhap"
                 android:padding="10dp"

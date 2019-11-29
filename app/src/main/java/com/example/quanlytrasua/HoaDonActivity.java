@@ -33,11 +33,13 @@ import com.example.quanlytrasua.Model.chitiethoadon;
 import com.example.quanlytrasua.ultil.Server;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +56,7 @@ public class HoaDonActivity extends AppCompatActivity {
 
     public static boolean CHECK_START_MENU = false;
     DatabaseReference mDatabase;
+
     //Socket mSocket;
     ArrayList<ThucUong> listThucUongchecked;
     private TextView tvTable;
@@ -73,6 +76,7 @@ public class HoaDonActivity extends AppCompatActivity {
     private int idBanchecking;
     long tongTien = 0;
     String maHOADONCHECK = "";
+    ArrayList<chitiethoadon> listCT = new ArrayList<>();
 
 
     @Override
@@ -106,6 +110,7 @@ public class HoaDonActivity extends AppCompatActivity {
         tvTotalBill = findViewById(R.id.tvTongBill);
         tvTime = findViewById(R.id.tvTimeBill);
         imgRefresh = findViewById(R.id.btnRefresh);
+
     }
 
     @Override
@@ -259,12 +264,12 @@ public class HoaDonActivity extends AppCompatActivity {
 
     private void LuuHoaDon() {
         try {
-            XoaHetChiTietCu(maHOADONCHECK);
-            Thread.sleep(500);
+            //XoaHetChiTietCu(maHOADONCHECK);
+
             ThemVaoBangHoaDon(maHOADONCHECK);
-            Thread.sleep(500);
+
             CapNhatTinhTrangBan(idBanchecking, 1);
-            ThemVaoBangChiTietHoaDon(maHOADONCHECK);
+            //ThemVaoBangChiTietHoaDon(maHOADONCHECK);
         }catch (Exception e){
 
         }
@@ -272,189 +277,88 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
-    private void XoaHetChiTietCu(final String maHoaDonCheck) {
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanXoaCTHD,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//
-//                    }
-//                }
-//        ){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<>();
-//                params.put("mahoadon", String.valueOf(maHoaDonCheck));
-//                return params;
-//            }
-//        };
-//        requestQueue.add(stringRequest);
-        if(!maHoaDonCheck.equals("")) {
-            mDatabase.child("chitiethoadon").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    chitiethoadon ct = dataSnapshot.getValue(chitiethoadon.class);
-                    if(ct.getMaHoaDon().equals(maHoaDonCheck)){
-                        mDatabase.child("chitiethoadon").child(dataSnapshot.getKey()).removeValue();
-                    }
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-
-    }
-
-
-    private void ThemVaoBangChiTietHoaDon(String maHoaDonCheck) {
-//        for(final ThucUong thucUong : listThucUong) {
-//            RequestQueue requestQueue = Volley.newRequestQueue(this);
-//            StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoCTHoaDon+maHoaDonCheck,
-//                    new Response.Listener<String>() {
-//                        @Override
-//                        public void onResponse(String response) {
-//                            if (response.trim().equals("success")) {
-//
-//                                Toast.makeText(HoaDonActivity.this, "Đã thêm chi hóa đơn", Toast.LENGTH_LONG).show();
-//                            } else {
-//                                Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật chi tiết hóa đơn", Toast.LENGTH_LONG).show();
-//
-//                            }
-//                        }
-//                    },
-//                    new Response.ErrorListener() {
-//                        @Override
-//                        public void onErrorResponse(VolleyError error) {
-//
-//                        }
-//                    }
-//            ) {
+//    private void XoaHetChiTietCu(final String maHoaDonCheck) {
+////
+//        if(!maHoaDonCheck.equals("")) {
+//            mDatabase.child("chitiethoadon").addChildEventListener(new ChildEventListener() {
 //                @Override
-//                protected Map<String, String> getParams() throws AuthFailureError {
-//                    Map<String, String> params = new HashMap<>();
-//
-//                    params.put("mathucuong", String.valueOf(thucUong.getId()));
-//                    params.put("soluong", String.valueOf(thucUong.getCount()));
-//                    //params.put("mahoadon",String.valueOf(maHoaDon));
-//
-//                    return params;
+//                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                    chitiethoadon ct = dataSnapshot.getValue(chitiethoadon.class);
+//                    if(ct.getMaHoaDon().equals(maHoaDonCheck)){
+//                        mDatabase.child("chitiethoadon").child(dataSnapshot.getKey()).removeValue();
+//                    }
 //                }
-//            };
-//            requestQueue.add(stringRequest);
+//
+//                @Override
+//                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//                }
+//
+//                @Override
+//                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//                }
+//
+//                @Override
+//                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
 //        }
-    }
+//
+//
+//    }
 
 
-    private void ThemVaoBangHoaDon(String maHoaDonCheck) {
+//    private void ThemVaoBangChiTietHoaDon(String maHoaDonCheck) {
+////
+//    }
+
+
+    private void ThemVaoBangHoaDon(final String maHoaDonCheck) {
+        DatabaseReference chitietref = FirebaseDatabase.getInstance().getReference("chitiethoadon");
+        chitietref.keepSynced(true);
         getTongBill();
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoHoaDon+maHoaDonCheck,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        if(response.trim().equals("success")){
-//
-//
-//                        }
-//                        else{
-//                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật hóa đơn",Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//
-//                    }
-//                }
-//        ){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<>();
-//                params.put("maban", String.valueOf(idBanchecking));
-//                params.put("thanhtien", String.valueOf(tongTien));
-//                return params;
-//            }
-//        };
-//        requestQueue.add(stringRequest);
           if(maHoaDonCheck.equals("")){
-              String mGroupId = mDatabase.push().getKey();
+              final String mGroupId = mDatabase.push().getKey();
               //String id, int maBan, String ngayTao, int tinhTrang, long thanhTien
               mDatabase.child("hoadon").child(mGroupId).setValue(new HoaDon2(mGroupId,idBanchecking, "2019-10-10",0,tongTien));
-              for(ThucUong thucUong : listThucUong){
-                  //String id, String maHoaDon, String maThucUong, int soLuong
-                  String idct = mDatabase.push().getKey();
-                  mDatabase.child("chitiethoadon").child(idct).setValue(new chitiethoadon(idct,mGroupId,thucUong.getId(),thucUong.getCount()));
-              }
+                  for (ThucUong thucUong : listThucUong){
+                      //String id, String maHoaDon, String maThucUong, int soLuong
+                      String key = mDatabase.push().getKey();
+                      mDatabase.child("chitiethoadon").child(key).setValue(new chitiethoadon(key,mGroupId,thucUong.getId(),thucUong.getCount()));
+                  }
           }else{
 
 
               mDatabase.child("hoadon").child(maHoaDonCheck).setValue(new HoaDon2(maHoaDonCheck,Integer.parseInt(table), "2019-10-10",0,tongTien));
+              final ArrayList<chitiethoadon> tam = new ArrayList<>();
+              int t=0;
               for(ThucUong thucUong : listThucUong){
-                  //String id, String maHoaDon, String maThucUong, int soLuong
-                  String idct = mDatabase.push().getKey();
-                  mDatabase.child("chitiethoadon").child(idct).setValue(new chitiethoadon(idct,maHoaDonCheck,thucUong.getId(),thucUong.getCount()));
+                  for(chitiethoadon ct : listCT){
+                      if(thucUong.getId().equals(ct.getMaThucUong())){
+                          t++;
+                          chitietref.child(ct.getId()).setValue(new chitiethoadon(ct.getId(),ct.getMaHoaDon(),thucUong.getId(),thucUong.getCount()));
+                      }
+                  }
+                  if(t==0){
+                      String key = mDatabase.push().getKey();
+                      chitietref.child(key).setValue(new chitiethoadon(key,maHoaDonCheck,thucUong.getId(),thucUong.getCount()));
+                  }
+                  t=0;
               }
+
           }
 
 
     }
 
     private void CapNhatTinhTrangBan(int idBan, final int tinhTrang) {
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanCapNhatBan+idBan,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        if(response.trim().equals("success")){
-//
-//                        }
-//                        else{
-//                            Toast.makeText(HoaDonActivity.this, "Lỗi cập nhật bàn",Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(HoaDonActivity.this, "Lỗi server",Toast.LENGTH_LONG).show();
-//                    }
-//                }
-//        ){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<>();
-//                params.put("tinhTrang", String.valueOf(tinhTrang));
-//                return params;
-//            }
-//        };
-//        requestQueue.add(stringRequest);
             mDatabase.child("Ban").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -567,10 +471,12 @@ public class HoaDonActivity extends AppCompatActivity {
 //            }
 //        });
 //        requestQueue.add(jsonArrayRequest);
+
+        final DatabaseReference ctref = FirebaseDatabase.getInstance().getReference("chitiethoadon");
           mDatabase.child("hoadon").addChildEventListener(new ChildEventListener() {
               @Override
               public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                  HoaDon2 hd = dataSnapshot.getValue(HoaDon2.class);
+                  final HoaDon2 hd = dataSnapshot.getValue(HoaDon2.class);
                   hd.setId(dataSnapshot.getKey());
                   if(table.equals(String.valueOf(hd.getMaBan()))&& hd.getTinhTrang()==0){
                       maHOADONCHECK = dataSnapshot.getKey();
@@ -607,6 +513,7 @@ public class HoaDonActivity extends AppCompatActivity {
                   final chitiethoadon ct = dataSnapshot.getValue(chitiethoadon.class);
                   ct.setId(dataSnapshot.getKey());
                   if(ct.getMaHoaDon().equals(maHOADONCHECK)){
+                      listCT.add(ct);
                       mDatabase.child("thucuong").addChildEventListener(new ChildEventListener() {
                           @Override
                           public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
