@@ -277,47 +277,6 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
-//    private void XoaHetChiTietCu(final String maHoaDonCheck) {
-////
-//        if(!maHoaDonCheck.equals("")) {
-//            mDatabase.child("chitiethoadon").addChildEventListener(new ChildEventListener() {
-//                @Override
-//                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                    chitiethoadon ct = dataSnapshot.getValue(chitiethoadon.class);
-//                    if(ct.getMaHoaDon().equals(maHoaDonCheck)){
-//                        mDatabase.child("chitiethoadon").child(dataSnapshot.getKey()).removeValue();
-//                    }
-//                }
-//
-//                @Override
-//                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                }
-//
-//                @Override
-//                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//                }
-//
-//                @Override
-//                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                }
-//            });
-//        }
-//
-//
-//    }
-
-
-//    private void ThemVaoBangChiTietHoaDon(String maHoaDonCheck) {
-////
-//    }
 
 
     private void ThemVaoBangHoaDon(final String maHoaDonCheck) {
@@ -339,18 +298,32 @@ public class HoaDonActivity extends AppCompatActivity {
               mDatabase.child("hoadon").child(maHoaDonCheck).setValue(new HoaDon2(maHoaDonCheck,Integer.parseInt(table), "2019-10-10",0,tongTien));
               final ArrayList<chitiethoadon> tam = new ArrayList<>();
               int t=0;
+              int kt=0;
               for(ThucUong thucUong : listThucUong){
                   for(chitiethoadon ct : listCT){
-                      if(thucUong.getId().equals(ct.getMaThucUong())){
+                      if(thucUong.getId().equals(ct.getMaThucUong())) {
+                          tam.remove(ct);
                           t++;
-                          chitietref.child(ct.getId()).setValue(new chitiethoadon(ct.getId(),ct.getMaHoaDon(),thucUong.getId(),thucUong.getCount()));
+                          chitietref.child(ct.getId()).setValue(new chitiethoadon(ct.getId(), ct.getMaHoaDon(), thucUong.getId(), thucUong.getCount()));
                       }
+                      else{
+                          if(kt==0){
+                              tam.add(ct);
+                          }
+                      }
+
                   }
+
                   if(t==0){
                       String key = mDatabase.push().getKey();
                       chitietref.child(key).setValue(new chitiethoadon(key,maHoaDonCheck,thucUong.getId(),thucUong.getCount()));
                   }
+
                   t=0;
+                  kt++;
+              }
+              for (chitiethoadon ct : tam){
+                  chitietref.child(ct.getId()).removeValue();
               }
 
           }
