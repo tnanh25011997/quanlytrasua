@@ -73,7 +73,7 @@ public class HoaDonActivity extends AppCompatActivity {
     private int idBanchecking;
     long tongTien = 0;
     String maHOADONCHECK = "";
-
+    ArrayList<chitiethoadon> dschitiet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +142,7 @@ public class HoaDonActivity extends AppCompatActivity {
         imgDayBill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 showDialogLuuHoaDon();
             }
         });
@@ -251,6 +252,7 @@ public class HoaDonActivity extends AppCompatActivity {
                 finish();
 
 
+
             }
         });
         AlertDialog alertDialog = builder.create();
@@ -260,9 +262,7 @@ public class HoaDonActivity extends AppCompatActivity {
     private void LuuHoaDon() {
         try {
             XoaHetChiTietCu(maHOADONCHECK);
-            Thread.sleep(500);
             ThemVaoBangHoaDon(maHOADONCHECK);
-            Thread.sleep(500);
             CapNhatTinhTrangBan(idBanchecking, 1);
             ThemVaoBangChiTietHoaDon(maHOADONCHECK);
         }catch (Exception e){
@@ -272,7 +272,10 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
+
+
     private void XoaHetChiTietCu(final String maHoaDonCheck) {
+
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
 //        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanXoaCTHD,
 //                new Response.Listener<String>() {
@@ -296,7 +299,10 @@ public class HoaDonActivity extends AppCompatActivity {
 //            }
 //        };
 //        requestQueue.add(stringRequest);
-        if(!maHoaDonCheck.equals("")) {
+        if(maHoaDonCheck.equals("")){
+
+        }
+        else{
             mDatabase.child("chitiethoadon").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -326,7 +332,9 @@ public class HoaDonActivity extends AppCompatActivity {
 
                 }
             });
+
         }
+
 
 
     }
@@ -371,7 +379,7 @@ public class HoaDonActivity extends AppCompatActivity {
     }
 
 
-    private void ThemVaoBangHoaDon(String maHoaDonCheck) {
+    private void ThemVaoBangHoaDon(final String maHoaDonCheck) {
         getTongBill();
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
 //        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanThemVaoHoaDon+maHoaDonCheck,
@@ -405,10 +413,8 @@ public class HoaDonActivity extends AppCompatActivity {
 //        requestQueue.add(stringRequest);
           if(maHoaDonCheck.equals("")){
               String mGroupId = mDatabase.push().getKey();
-              //String id, int maBan, String ngayTao, int tinhTrang, long thanhTien
               mDatabase.child("hoadon").child(mGroupId).setValue(new HoaDon2(mGroupId,idBanchecking, "2019-10-10",0,tongTien));
               for(ThucUong thucUong : listThucUong){
-                  //String id, String maHoaDon, String maThucUong, int soLuong
                   String idct = mDatabase.push().getKey();
                   mDatabase.child("chitiethoadon").child(idct).setValue(new chitiethoadon(idct,mGroupId,thucUong.getId(),thucUong.getCount()));
               }
