@@ -71,7 +71,7 @@ public class AdapterHienThiHoaDon extends BaseAdapter {
         final AdapterHienThiHoaDon.ViewHolder viewHolder = (AdapterHienThiHoaDon.ViewHolder) viewRow.getTag();
 
         viewHolder.tvTen.setText(thucUong.getTenThucUong());
-        viewHolder.tvGia.setText(thucUong.getGia()+"");
+        viewHolder.tvGia.setText(thucUong.getGia()+" VNĐ");
         viewHolder.tvCount.setText(thucUong.getCount()+"");
         viewHolder.btnUp.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -12,6 +12,13 @@ public class HoaDon2 {
     public HoaDon2() {
     }
 
+    public HoaDon2(String id, int maBan, String ngayTao, long thanhTien) {
+        this.id = id;
+        this.maBan = maBan;
+        this.ngayTao = ngayTao;
+        this.thanhTien = thanhTien;
+    }
+
     public HoaDon2(String id, int maBan, String ngayTao, int tinhTrang, long thanhTien) {
         this.id = id;
         this.maBan = maBan;

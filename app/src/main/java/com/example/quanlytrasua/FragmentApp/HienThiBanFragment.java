@@ -28,8 +28,6 @@ import com.example.quanlytrasua.R;
 import com.example.quanlytrasua.ThucUongActivity;
 import com.example.quanlytrasua.ultil.Server;
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,14 +54,6 @@ public class HienThiBanFragment extends Fragment {
     int id = 0;
     String tenBan = "";
     int tinhTrang = 0;
-//    Socket mSocket;
-//    {
-//        try {
-//            mSocket = IO.socket(Server.PORT);
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-//    }
     DatabaseReference mData;
 
 
@@ -73,13 +63,6 @@ public class HienThiBanFragment extends Fragment {
         View view = inflater.inflate(R.layout.layout_hienthiban,container,false);
         gvHienThiBan = view.findViewById(R.id.gvHienThiBan);
 
-//        mSocket.on("SERVER_SEND_LIST_TABLE", onRetrieveTableData);
-//        mSocket.connect();
-//        try {
-//            Thread.sleep(100);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
 
         mData = FirebaseDatabase.getInstance().getReference();
         banDTOList = new ArrayList<BanDTO>();
@@ -87,7 +70,6 @@ public class HienThiBanFragment extends Fragment {
         gvHienThiBan.setAdapter(adapterHienThiBan);
         adapterHienThiBan.notifyDataSetChanged();
         GetDuLieuBan();
-        //mSocket.emit("CLIENT_REQUEST_LIST_TABLE","1");
 
         gvHienThiBan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -192,39 +174,5 @@ public class HienThiBanFragment extends Fragment {
             }
         });
     }
-
-
-    private Emitter.Listener onRetrieveTableData= new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            if(getActivity() == null)
-                return;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONArray data = (JSONArray) args[0];
-
-                    banDTOList.clear();
-                    for (int i=0; i<data.length(); i++)
-                    {
-                        try {
-
-                            JSONObject object = data.getJSONObject(i);
-                            id = object.getInt("id");
-                            tenBan = object.getString("TenBan");
-                            tinhTrang = object.getInt("TinhTrang");
-                            banDTOList.add(new BanDTO(id,tenBan, tinhTrang));
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    adapterHienThiBan.notifyDataSetChanged();
-
-                }
-            });
-        }
-    };
 
 }

@@ -2,8 +2,6 @@ package com.example.quanlytrasua.ultil;
 
 public class Server {
     public static String localhost ="192.168.1.7";
-    public static String PORT = "http://192.168.1.7:3000/";
-    //public static String PORT = "http://172.16.1.121:3000/";
     //public static String localhost = "172.16.1.121";
     public static String DuongDanAnh = "http://"+localhost+"/quanlytrasua/image/";
     public static String DuongDanBan = "http://"+localhost+"/quanlytrasua/mvc/BanController/getListBan/";

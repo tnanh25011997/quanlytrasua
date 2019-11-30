@@ -77,7 +77,7 @@ public class AdapterHienThiThucUong extends BaseAdapter {
         //final AdapterHienThiThucUong.ViewHolder viewHolder = (AdapterHienThiThucUong.ViewHolder) viewRow.getTag();
         Glide.with(context).load(Server.DuongDanAnh+thucUong.getAnh()).into(viewHolder.imgThucUong);
         viewHolder.tvTen.setText(thucUong.getTenThucUong());
-        viewHolder.tvGia.setText(thucUong.getGia()+"");
+        viewHolder.tvGia.setText(thucUong.getGia()+" VNĐ");
         viewHolder.tvCount.setText(thucUong.getCount()+"");
         viewHolder.btnUp.setOnClickListener(new View.OnClickListener() {
             @Override

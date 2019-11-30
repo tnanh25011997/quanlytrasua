@@ -45,9 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-//import io.socket.client.IO;
-//import io.socket.client.Socket;
-//import io.socket.emitter.Emitter;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -56,7 +54,6 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     SessionManager sessionManager;
-    //Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,13 +62,6 @@ public class LoginActivity extends AppCompatActivity {
 
         //mDatabase.child("chitiethoadon").push().setValue(new chitiethoadon("1","-Lul8nHmGAHEmN-NrKqU","1",2));
         mAuth = FirebaseAuth.getInstance();
-//        try {
-//            mSocket = IO.socket(Server.PORT);
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-        //initSocket();
-        //mSocket.on("SERVER_SEND_RESULT", onRetrieveLoginData);
 
         sessionManager = new SessionManager(this);
         txtTenDangNhap = findViewById(R.id.txtTenDangNhap);
@@ -94,31 +84,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-//    private Emitter.Listener onRetrieveLoginData = new Emitter.Listener() {
-//        @Override
-//        public void call(final Object... args) {
-//
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    JSONArray data = (JSONArray) args[0];
-//                    if (data.length() == 0){
-//                        Toast.makeText(LoginActivity.this,"Sai tài khoản mật khẩu", Toast.LENGTH_LONG).show();
-//                    }
-//                    else{
-//                        Intent intent = new Intent(LoginActivity.this, DanhSachBanActivity.class);
-//                        //Toast.makeText(LoginActivity.this,data.length()+"", Toast.LENGTH_LONG).show();
-//                        startActivity(intent);
-//                        finish();
-//
-//                    }
-//                }
-//            });
-//        }
-//    };
-//    private void initSocket() {
-//        mSocket.connect();
-//    }
 
     private void Login(final String tenDangNhap, final String matKhau) {
 

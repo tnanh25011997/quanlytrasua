@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.quanlytrasua.Model.HoaDon2;
 import com.example.quanlytrasua.Model.ThongKe;
 import com.example.quanlytrasua.R;
 
@@ -15,9 +16,9 @@ import java.util.ArrayList;
 public class AdapterHienThiThongKe extends BaseAdapter {
     private Context context;
     private int layout;
-    private ArrayList<ThongKe> arrThongKe;
+    private ArrayList<HoaDon2> arrThongKe;
 
-    public AdapterHienThiThongKe(Context context, int layout, ArrayList<ThongKe> arrThongKe) {
+    public AdapterHienThiThongKe(Context context, int layout, ArrayList<HoaDon2> arrThongKe) {
         this.context = context;
         this.layout = layout;
         this.arrThongKe = arrThongKe;
@@ -58,12 +59,12 @@ public class AdapterHienThiThongKe extends BaseAdapter {
             viewRow.setTag(viewHolder);
 
         }
-        final ThongKe thongKe = arrThongKe.get(i);
+        final HoaDon2 thongKe = arrThongKe.get(i);
         final AdapterHienThiThongKe.ViewHolder viewHolder = (AdapterHienThiThongKe.ViewHolder) viewRow.getTag();
-        viewHolder.tvIDHoaDon.setText("Mã hóa đơn: "+ thongKe.getIdHoaDon());
-        viewHolder.tvIDBan.setText("Bàn số: "+thongKe.getIdBan()+"");
-        viewHolder.tvNgay.setText("Ngày: "+thongKe.getNgay()+"");
-        viewHolder.tvTongTien.setText("Tổng tiền: "+thongKe.getTongTien()+" VNĐ");
+        viewHolder.tvIDHoaDon.setText("Mã hóa đơn: "+ thongKe.getId());
+        viewHolder.tvIDBan.setText("Bàn số: "+thongKe.getMaBan()+"");
+        viewHolder.tvNgay.setText("Ngày: "+thongKe.getNgayTao()+"");
+        viewHolder.tvTongTien.setText("Tổng tiền: "+thongKe.getThanhTien()+" VNĐ");
         return viewRow;
     }
 }

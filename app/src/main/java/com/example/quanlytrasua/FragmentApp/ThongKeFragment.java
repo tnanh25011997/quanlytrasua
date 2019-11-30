@@ -9,39 +9,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiThongKe;
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiThongKeThucUong;
-import com.example.quanlytrasua.Model.ThongKe;
+import com.example.quanlytrasua.Model.HoaDon2;
 import com.example.quanlytrasua.Model.ThucUong;
+import com.example.quanlytrasua.Model.chitiethoadon;
 import com.example.quanlytrasua.R;
 import com.example.quanlytrasua.ultil.Server;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 
 public class ThongKeFragment extends Fragment {
-    int idHoaDon,idBan;
-    String ngay,tongTien;
+    DatabaseReference mDatabase;
+    int idBan;
+    String idHoaDon;
+    String ngay;
+    long tongTien;
     ListView lvHoaDon;
-    ArrayList<ThongKe> listThongKe;
-    String tenThucUong;
-    int soLuong;
-    long gia;
+    ArrayList<HoaDon2> listThongKe;
+
     ArrayList<ThucUong> listThucUong;
     AdapterHienThiThongKe adapterHienThiThongKe;
     AdapterHienThiThongKeThucUong adapterHienThiThongKeThucUong;
@@ -50,8 +46,9 @@ public class ThongKeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_hienthithongke,container,false);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         lvHoaDon = view.findViewById(R.id.lvHoaDon);
-        listThongKe = new ArrayList<ThongKe>();
+        listThongKe = new ArrayList<HoaDon2>();
         listThucUong = new ArrayList<ThucUong>();
         adapterHienThiThongKe = new AdapterHienThiThongKe(getActivity(), R.layout.custom_layout_hienthithongke, listThongKe);
         lvHoaDon.setAdapter(adapterHienThiThongKe);
@@ -60,14 +57,14 @@ public class ThongKeFragment extends Fragment {
         lvHoaDon.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                initDialog(listThongKe.get(i).getIdHoaDon());
+                initDialog(listThongKe.get(i).getId());
 
             }
         });
         return view;
     }
 
-    private void initDialog(int midHoaDon) {
+    private void initDialog(String midHoaDon) {
         dialogListItem = new Dialog(getActivity());
         dialogListItem.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         dialogListItem.setContentView(R.layout.layout_hienthithongkethucuong);
@@ -81,67 +78,111 @@ public class ThongKeFragment extends Fragment {
 
     }
 
-    private void getThucUongTheoHoaDon(int midHoaDon) {
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanThongKeThucUong+midHoaDon, new Response.Listener<JSONArray>() {
+    private void getThucUongTheoHoaDon(final String midHoaDon) {
+        listThucUong.clear();
+        mDatabase.child("chitiethoadon").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onResponse(JSONArray response) {
-                if(response !=null){
-                    listThucUong.clear();
-                    for(int i=0; i<response.length(); i++){
-
-                        try {
-                            JSONObject jsonObject = response.getJSONObject(i);
-                            tenThucUong = jsonObject.getString("tenThucUong");
-                            soLuong = jsonObject.getInt("soLuong");
-                            gia = jsonObject.getLong("gia");
-                            listThucUong.add(new ThucUong(tenThucUong,gia,soLuong));
-                            //listThucUong.add(new ThucUong(1,"a",1200,1,"a",12,"alo"));
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                final chitiethoadon ct = dataSnapshot.getValue(chitiethoadon.class);
+                ct.setId(dataSnapshot.getKey());
+                if(ct.getMaHoaDon().equals(midHoaDon)){
+                    mDatabase.child("thucuong").addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                            ThucUong thucUong = dataSnapshot.getValue(ThucUong.class);
+                            thucUong.setId(dataSnapshot.getKey());
+                            thucUong.setCount(ct.getSoLuong());
+                            if(thucUong.getId().equals(ct.getMaThucUong())){
+                                listThucUong.add(new ThucUong(thucUong.getTenThucUong(),thucUong.getGia(),thucUong.getCount()));
+                            }
                         }
-                    }
-                    adapterHienThiThongKeThucUong.notifyDataSetChanged();
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-        requestQueue.add(jsonArrayRequest);
+        adapterHienThiThongKeThucUong.notifyDataSetChanged();
     }
 
     private void GetDuLieuThongKe() {
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanThongKe, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                if(response !=null){
-                    for(int i=0; i<response.length(); i++){
 
-                        try {
-                            JSONObject jsonObject = response.getJSONObject(i);
-                            idHoaDon = jsonObject.getInt("id");
-                            idBan = jsonObject.getInt("maBan");
-                            ngay = jsonObject.getString("ngayTao");
-                            tongTien = jsonObject.getString("thanhTien");
-                            listThongKe.add(new ThongKe(idHoaDon,idBan,tongTien,ngay));
-                            adapterHienThiThongKe.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }, new Response.ErrorListener() {
+        mDatabase.child("hoadon").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                HoaDon2 hd = dataSnapshot.getValue(HoaDon2.class);
+                hd.setId(dataSnapshot.getKey());
+                if(hd.getTinhTrang() == 1){
+                    idHoaDon = hd.getId();
+                    idBan = hd.getMaBan();
+                    ngay = hd.getNgayTao();
+                    tongTien = hd.getThanhTien();
+                    //String id, int maBan, String ngayTao, long thanhTien
+                    listThongKe.add(new HoaDon2(idHoaDon,idBan,ngay,tongTien));
+                    adapterHienThiThongKe.notifyDataSetChanged();
+                }
+
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-        requestQueue.add(jsonArrayRequest);
+
     }
 }

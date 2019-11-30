@@ -57,7 +57,6 @@ public class HoaDonActivity extends AppCompatActivity {
     public static boolean CHECK_START_MENU = false;
     DatabaseReference mDatabase;
 
-    //Socket mSocket;
     ArrayList<ThucUong> listThucUongchecked;
     private TextView tvTable;
     private TextView tvTime;
@@ -65,15 +64,19 @@ public class HoaDonActivity extends AppCompatActivity {
     private ListView lvHoaDon;
     private AdapterHienThiHoaDon adapterHienThiHoaDon;
     private ArrayList<ThucUong> listThucUong;
-    private String table;
+    private int idBanchecking; //lay idban trong
+    private String table; //lay idban co nguoi
+
     private String thoigian;
+    private String timeCheckIn;
+    private String timeCheckOut;
 
     private TextView tvTotalBill;
     private ImageView imgThemBill;
     private ImageView imgDayBill;
     private ImageView imgInBill;
     private ImageView imgRefresh;
-    private int idBanchecking;
+
     long tongTien = 0;
     String maHOADONCHECK = "";
     ArrayList<chitiethoadon> listCT = new ArrayList<>();
@@ -84,17 +87,6 @@ public class HoaDonActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hoa_don);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-//        try {
-//            mSocket = IO.socket(Server.PORT);
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-//        mSocket.connect();
-//        try {
-//            Thread.sleep(100);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         AddControl();
         AddEvent();
 
@@ -208,29 +200,30 @@ public class HoaDonActivity extends AppCompatActivity {
     }
 
     private void UpdateTinhTrangHoaDon(final String maHoaDonCheck) {
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanCapNhatTrangThaiHoaDon,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(HoaDonActivity.this, "Đã thanh toán hóa đơn có mã "+maHoaDonCheck,Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("idHoaDon",String.valueOf(maHoaDonCheck));
-                return params;
-            }
-        };
-        requestQueue.add(stringRequest);
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanCapNhatTrangThaiHoaDon,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Toast.makeText(HoaDonActivity.this, "Đã thanh toán hóa đơn có mã "+maHoaDonCheck,Toast.LENGTH_LONG).show();
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                    }
+//                }
+//        ){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                params.put("idHoaDon",String.valueOf(maHoaDonCheck));
+//                return params;
+//            }
+//        };
+//        requestQueue.add(stringRequest);
+        mDatabase.child("hoadon").child(maHoaDonCheck).setValue(new HoaDon2(maHoaDonCheck,Integer.parseInt(table), getNgay(),1,tongTien));
     }
 
 
@@ -252,7 +245,6 @@ public class HoaDonActivity extends AppCompatActivity {
                 Intent intent = new Intent(HoaDonActivity.this, DanhSachBanActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                //mSocket.emit("CLIENT_REQUEST_LIST_TABLE","1");
                 finish();
 
 
@@ -286,7 +278,7 @@ public class HoaDonActivity extends AppCompatActivity {
           if(maHoaDonCheck.equals("")){
               final String mGroupId = mDatabase.push().getKey();
               //String id, int maBan, String ngayTao, int tinhTrang, long thanhTien
-              mDatabase.child("hoadon").child(mGroupId).setValue(new HoaDon2(mGroupId,idBanchecking, "2019-10-10",0,tongTien));
+              mDatabase.child("hoadon").child(mGroupId).setValue(new HoaDon2(mGroupId,idBanchecking, getNgay(),0,tongTien));
                   for (ThucUong thucUong : listThucUong){
                       //String id, String maHoaDon, String maThucUong, int soLuong
                       String key = mDatabase.push().getKey();
@@ -295,7 +287,7 @@ public class HoaDonActivity extends AppCompatActivity {
           }else{
 
 
-              mDatabase.child("hoadon").child(maHoaDonCheck).setValue(new HoaDon2(maHoaDonCheck,Integer.parseInt(table), "2019-10-10",0,tongTien));
+              mDatabase.child("hoadon").child(maHoaDonCheck).setValue(new HoaDon2(maHoaDonCheck,Integer.parseInt(table), getNgay(),0,tongTien));
               final ArrayList<chitiethoadon> tam = new ArrayList<>();
               int t=0;
               int kt=0;
@@ -331,14 +323,15 @@ public class HoaDonActivity extends AppCompatActivity {
 
     }
 
-    private void CapNhatTinhTrangBan(int idBan, final int tinhTrang) {
+    private void CapNhatTinhTrangBan(final int idBan, final int tinhTrang) {
             mDatabase.child("Ban").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     BanDTO ban = dataSnapshot.getValue(BanDTO.class);
-                    if(ban.getMaBan()== idBanchecking){
-                        mDatabase.child("Ban").child(dataSnapshot.getKey()).setValue(new BanDTO(idBanchecking,ban.getTenBan(),1));
+                    if(ban.getMaBan()== idBan ){
+                        mDatabase.child("Ban").child(dataSnapshot.getKey()).setValue(new BanDTO(idBan,ban.getTenBan(),tinhTrang));
                     }
+
                 }
 
                 @Override
@@ -444,7 +437,7 @@ public class HoaDonActivity extends AppCompatActivity {
 //            }
 //        });
 //        requestQueue.add(jsonArrayRequest);
-
+        tvTable.setText("Bàn số: "+table);
         final DatabaseReference ctref = FirebaseDatabase.getInstance().getReference("chitiethoadon");
           mDatabase.child("hoadon").addChildEventListener(new ChildEventListener() {
               @Override
@@ -456,7 +449,7 @@ public class HoaDonActivity extends AppCompatActivity {
                       tongTien = hd.getThanhTien();
                       thoigian = hd.getNgayTao();
                       tvTime.setText("Thời gian: "+thoigian);
-                      tvTotalBill.setText("Tổng tiền: "+ tongTien);
+                      tvTotalBill.setText("Tổng tiền: "+ getTien(tongTien));
                   }
               }
 
@@ -595,6 +588,23 @@ public class HoaDonActivity extends AppCompatActivity {
         }
 
         return money+" VND";
+    }
+    private String getNgay()
+    {
+        String tg;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+        String[] str = timeStamp.split("_");
+        String[] str2 = str[0].split("");
+        String year = str2[1]+str2[2]+str2[3]+str2[4];
+        String month = str2[5]+str2[6];
+        String day = str2[7]+str2[8];
+
+        String[] str3 = str[1].split("");
+        String hour = str3[1]+str3[2];
+        String minute = str3[3]+str3[4];
+        String sec = str3[5]+str3[6];
+        tg = day+"/"+month+"/"+year+"   "+hour+":"+minute+":"+sec;
+        return tg;
     }
 
     @Override
