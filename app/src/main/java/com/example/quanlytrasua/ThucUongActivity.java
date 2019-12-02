@@ -9,6 +9,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,6 +55,7 @@ public class ThucUongActivity extends AppCompatActivity {
     Spinner spinner;
     ImageButton btnBack;
     TextView goToBill;
+    TextView timKiem;
 
     private  int idLoai;
     private String tenLoaiThucUong;
@@ -75,6 +78,45 @@ public class ThucUongActivity extends AppCompatActivity {
         Intent intent = getIntent();
         maBanChecked = intent.getStringExtra("table");
         AddControl();
+        timKiem.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(charSequence.toString().equals("")){
+                    //AddEvent();
+                    adapterHienThiThucUong = new AdapterHienThiThucUong(ThucUongActivity.this, R.layout.custom_layout_hienthithucuong, listThucUong);
+                    lvHienThiThucUong.setAdapter(adapterHienThiThucUong);
+                    adapterHienThiThucUong.notifyDataSetChanged();
+                }
+                else {
+                    //search
+                    ArrayList<ThucUong> arrSearch = new ArrayList<>();
+                    for (int j = 0; j<listThucUong.size(); j++)
+                    {
+                        if (listThucUong.get(j).getTenThucUong().trim().toLowerCase().contains(charSequence.toString().trim().toLowerCase()))
+                        {
+                            arrSearch.add(listThucUong.get(j));
+                        }
+                    }
+
+
+                    adapterHienThiThucUong = new AdapterHienThiThucUong(ThucUongActivity.this, R.layout.custom_layout_hienthithucuong, arrSearch);
+                    lvHienThiThucUong.setAdapter(adapterHienThiThucUong);
+                    adapterHienThiThucUong.notifyDataSetChanged();
+
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         AddEvent();
 
     }
@@ -103,6 +145,9 @@ public class ThucUongActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(adapterView.getItemAtPosition(i).equals("Chọn Loại Thức Uống")){
                     //do nothing
+                    adapterHienThiThucUong = new AdapterHienThiThucUong(ThucUongActivity.this, R.layout.custom_layout_hienthithucuong, listThucUong);
+                    lvHienThiThucUong.setAdapter(adapterHienThiThucUong);
+                    adapterHienThiThucUong.notifyDataSetChanged();
                 }
                 else{
 
@@ -295,6 +340,7 @@ public class ThucUongActivity extends AppCompatActivity {
         spinner = findViewById(R.id.spinner);
         btnBack = findViewById(R.id.btnBackMenu);
         goToBill = findViewById(R.id.btnGoToBill);
+        timKiem = findViewById(R.id.searchThucUong);
 
     }
 

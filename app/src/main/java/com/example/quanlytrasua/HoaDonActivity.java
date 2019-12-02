@@ -31,8 +31,7 @@ import com.example.quanlytrasua.Model.HoaDon2;
 import com.example.quanlytrasua.Model.ThucUong;
 import com.example.quanlytrasua.Model.chitiethoadon;
 import com.example.quanlytrasua.ultil.Server;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;

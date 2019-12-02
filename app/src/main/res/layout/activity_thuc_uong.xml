@@ -49,6 +49,13 @@
                 android:layout_height="wrap_content" />
         </FrameLayout>
     </androidx.appcompat.widget.Toolbar>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchThucUong"
+        android:hint="@string/timkiem">
+
+    </EditText>
     <Spinner
         android:layout_gravity="center_horizontal"
         android:id="@+id/spinner"
