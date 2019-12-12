@@ -87,7 +87,6 @@ public class ThucUongActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(charSequence.toString().equals("")){
-                    //AddEvent();
                     adapterHienThiThucUong = new AdapterHienThiThucUong(ThucUongActivity.this, R.layout.custom_layout_hienthithucuong, listThucUong);
                     lvHienThiThucUong.setAdapter(adapterHienThiThucUong);
                     adapterHienThiThucUong.notifyDataSetChanged();
@@ -193,13 +192,15 @@ public class ThucUongActivity extends AppCompatActivity {
                         listThucUongChecked.add(listThucUong.get(i));
                     }
                 }
-                if (HoaDonActivity.CHECK_START_MENU)
+                if (HoaDonActivity.CHECK_HD)
                 {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("result",listThucUongChecked);
-                    setResult(Activity.RESULT_OK,returnIntent);
+                    //đã có hóa đơn
+                    Intent intent = new Intent();
+                    intent.putExtra("result",listThucUongChecked);
+                    setResult(Activity.RESULT_OK,intent);
                     finish();
                 }else {
+                    // chưa có hóa đơn
                     Intent intent = new Intent(ThucUongActivity.this,HoaDonActivity.class);
                     intent.putExtra("list",listThucUongChecked);
                     intent.putExtra("table",maBanChecked);
@@ -212,33 +213,7 @@ public class ThucUongActivity extends AppCompatActivity {
     }
 
     private void getDuLieuLoaiThucUong() {
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanLoaiThucUong, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                if(response !=null){
-//                    for(int i=0; i<response.length(); i++){
-//
-//                        try {
-//                            JSONObject jsonObject = response.getJSONObject(i);
-//                            idLoai = jsonObject.getInt("id");
-//                            tenLoaiThucUong = jsonObject.getString("tenLoai");
-//
-//                            arrItemSpinner.add(tenLoaiThucUong);
-//                            listLoaiThucUong.add(new LoaiThucUong(idLoai,tenLoaiThucUong));
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueue.add(jsonArrayRequest);
+
 
         mData.child("loaithucuong").addChildEventListener(new ChildEventListener() {
             @Override
@@ -271,38 +246,7 @@ public class ThucUongActivity extends AppCompatActivity {
     }
 
     private void getDuLieuThucUong() {
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanThucUong, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                if(response !=null){
-//                    for(int i=0; i<response.length(); i++){
-//
-//                        try {
-//                            JSONObject jsonObject = response.getJSONObject(i);
-//                            id = jsonObject.getInt("id");
-//                            tenThucUong = jsonObject.getString("tenThucUong");
-//                            gia = jsonObject.getLong("gia");
-//                            maLoai = jsonObject.getInt("maLoai");
-//                            anh = jsonObject.getString("anh");
-//                            tenLoai = jsonObject.getString("tenLoai");
-//                            count = 0;
-//                            listThucUong.add(new ThucUong(id, tenThucUong,gia,maLoai,anh, tenLoai));
-//
-//                            adapterHienThiThucUong.notifyDataSetChanged();
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueue.add(jsonArrayRequest);
+
         mData.child("thucuong").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {

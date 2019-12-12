@@ -74,7 +74,6 @@ public class LoginActivity extends AppCompatActivity {
                 String matKhau = txtMatKhau.getText().toString();
                 if(!tenDangNhap.isEmpty()&& !matKhau.isEmpty()){
                     Login(tenDangNhap, matKhau);
-
                 }
                 else{
                     txtTenDangNhap.setError("Vui lòng nhập tên đăng nhập");
@@ -153,6 +152,5 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
-
     }
 }

@@ -66,9 +66,8 @@ public class AdapterHienThiHoaDon extends BaseAdapter {
 
             viewRow.setTag(viewHolder);
         }
-
-        final ThucUong thucUong = arrItem.get(i);
         final AdapterHienThiHoaDon.ViewHolder viewHolder = (AdapterHienThiHoaDon.ViewHolder) viewRow.getTag();
+        final ThucUong thucUong = arrItem.get(i);
 
         viewHolder.tvTen.setText(thucUong.getTenThucUong());
         viewHolder.tvGia.setText(thucUong.getGia()+" VNĐ");

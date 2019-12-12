@@ -46,7 +46,7 @@ import java.util.List;
 
 public class HienThiBanFragment extends Fragment {
 
-    public static boolean CHECK_TABLE = false;
+    public static boolean CHECK_BAN = false;
 
     GridView gvHienThiBan;
     List<BanDTO> banDTOList;
@@ -83,7 +83,7 @@ public class HienThiBanFragment extends Fragment {
                         if (check == 0)
                         {
 
-                            HienThiBanFragment.CHECK_TABLE = false;
+                            HienThiBanFragment.CHECK_BAN = false;
                             Intent intent = new Intent(getActivity(), ThucUongActivity.class);
                             intent.putExtra("table",maBan+"");
                             startActivity(intent);
@@ -92,7 +92,7 @@ public class HienThiBanFragment extends Fragment {
                         }
                         else if (check == 1)
                         {
-                            HienThiBanFragment.CHECK_TABLE = true;
+                            HienThiBanFragment.CHECK_BAN = true;
                             Intent intent = new Intent(getActivity(), HoaDonActivity.class);
                             intent.putExtra("table",maBan+"");
                             startActivity(intent);

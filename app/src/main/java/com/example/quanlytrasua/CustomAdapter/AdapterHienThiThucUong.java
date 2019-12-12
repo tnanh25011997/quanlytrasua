@@ -58,7 +58,6 @@ public class AdapterHienThiThucUong extends BaseAdapter {
         {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             viewRow = inflater.inflate(layout,viewGroup,false);
-            //AdapterHienThiThucUong.ViewHolder viewHolder = new AdapterHienThiThucUong.ViewHolder();
             viewHolder = new ViewHolder();
 
             viewHolder.imgThucUong = viewRow.findViewById(R.id.imgThucUong);
@@ -74,8 +73,7 @@ public class AdapterHienThiThucUong extends BaseAdapter {
             viewHolder = (ViewHolder)viewRow.getTag();
         }
         final ThucUong thucUong = arrItem.get(i);
-        //final AdapterHienThiThucUong.ViewHolder viewHolder = (AdapterHienThiThucUong.ViewHolder) viewRow.getTag();
-        Glide.with(context).load(Server.DuongDanAnh+thucUong.getAnh()).into(viewHolder.imgThucUong);
+        Glide.with(context).load(thucUong.getAnh()).into(viewHolder.imgThucUong);
         viewHolder.tvTen.setText(thucUong.getTenThucUong());
         viewHolder.tvGia.setText(thucUong.getGia()+" VNĐ");
         viewHolder.tvCount.setText(thucUong.getCount()+"");
@@ -95,7 +93,6 @@ public class AdapterHienThiThucUong extends BaseAdapter {
                 int i = thucUong.getCount();
                 if (i == 0)
                 {
-                    //viewHolder.tvCount.setText(i);
                     thucUong.setCount(i);
                 }
                 else

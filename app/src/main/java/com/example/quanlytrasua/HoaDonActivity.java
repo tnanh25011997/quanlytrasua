@@ -9,21 +9,14 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+
 import com.example.quanlytrasua.CustomAdapter.AdapterHienThiHoaDon;
 import com.example.quanlytrasua.FragmentApp.HienThiBanFragment;
 import com.example.quanlytrasua.Model.BanDTO;
@@ -40,23 +33,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class HoaDonActivity extends AppCompatActivity {
 
-    public static boolean CHECK_START_MENU = false;
+    public static boolean CHECK_HD = false;
     DatabaseReference mDatabase;
 
-    ArrayList<ThucUong> listThucUongchecked;
     private TextView tvTable;
     private TextView tvTime;
 
@@ -67,15 +55,13 @@ public class HoaDonActivity extends AppCompatActivity {
     private String table; //lay idban co nguoi
 
     private String thoigian;
-    private String timeCheckIn;
-    private String timeCheckOut;
 
     private TextView tvTotalBill;
-    private ImageView imgThemBill;
-    private ImageView imgDayBill;
-    private ImageView imgInBill;
+//    private ImageView imgThemBill;
+//    private ImageView imgDayBill;
+//    private ImageView imgInBill;
     private ImageView imgRefresh;
-
+    private Button btnThem,btnLuu,btnThanhToan;
     long tongTien = 0;
     String maHOADONCHECK = "";
     ArrayList<chitiethoadon> listCT = new ArrayList<>();
@@ -95,12 +81,15 @@ public class HoaDonActivity extends AppCompatActivity {
     private void AddControl() {
         lvHoaDon = findViewById(R.id.lvThucUongBill);
         tvTable = findViewById(R.id.tvTableBill);
-        imgThemBill = findViewById(R.id.btnThemBill);
-        imgInBill = findViewById(R.id.btnInBill);
-        imgDayBill = findViewById(R.id.btnDayBill);
+//        imgThemBill = findViewById(R.id.btnThemBill);
+//        imgInBill = findViewById(R.id.btnInBill);
+//        imgDayBill = findViewById(R.id.btnDayBill);
         tvTotalBill = findViewById(R.id.tvTongBill);
         tvTime = findViewById(R.id.tvTimeBill);
         imgRefresh = findViewById(R.id.btnRefresh);
+        btnThem = findViewById(R.id.btnThem);
+        btnLuu = findViewById(R.id.btnLuuHD);
+        btnThanhToan = findViewById(R.id.btnThanhToan);
 
     }
 
@@ -114,33 +103,43 @@ public class HoaDonActivity extends AppCompatActivity {
 
     private void AddEvent() {
 
-        if(HienThiBanFragment.CHECK_TABLE == false){
+        if(HienThiBanFragment.CHECK_BAN == false){
+            //chưa có hóa đơn
             LayDuLieuBanTrong();
             TaoViewBanTrong();
             getTongBill();
         }
         else{
+            //đã có hóa đơn
             listThucUong = new ArrayList<ThucUong>();
             adapterHienThiHoaDon = new AdapterHienThiHoaDon(HoaDonActivity.this, R.layout.custom_layout_hienthihoadon, listThucUong);
             lvHoaDon.setAdapter(adapterHienThiHoaDon);
+            adapterHienThiHoaDon.notifyDataSetChanged();
             LayDuLieuBanCoNguoi();
             TaoViewBanCoNguoi();
 
         }
-        imgThemBill.setOnClickListener(new View.OnClickListener() {
+        btnThem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CHECK_START_MENU = true;
+                CHECK_HD = true;
                 Intent intent = new Intent(HoaDonActivity.this,ThucUongActivity.class);
-                startActivityForResult(intent,111);
+                startActivityForResult(intent,11);
             }
         });
-        imgDayBill.setOnClickListener(new View.OnClickListener() {
+        btnLuu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDialogLuuHoaDon();
             }
         });
+        btnThanhToan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogThanhToan();
+            }
+        });
+
         imgRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,12 +154,7 @@ public class HoaDonActivity extends AppCompatActivity {
                 adapterHienThiHoaDon.notifyDataSetChanged();
             }
         });
-        imgInBill.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialogThanhToan();
-            }
-        });
+
     }
 
     private void showDialogThanhToan() {
@@ -173,7 +167,7 @@ public class HoaDonActivity extends AppCompatActivity {
                 dialogInterface.dismiss();
             }
         });
-        builder.setNegativeButton("Lưu", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Xác Nhận", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ThanhToan();
@@ -199,29 +193,7 @@ public class HoaDonActivity extends AppCompatActivity {
     }
 
     private void UpdateTinhTrangHoaDon(final String maHoaDonCheck) {
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanCapNhatTrangThaiHoaDon,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        Toast.makeText(HoaDonActivity.this, "Đã thanh toán hóa đơn có mã "+maHoaDonCheck,Toast.LENGTH_LONG).show();
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//
-//                    }
-//                }
-//        ){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String, String> params = new HashMap<>();
-//                params.put("idHoaDon",String.valueOf(maHoaDonCheck));
-//                return params;
-//            }
-//        };
-//        requestQueue.add(stringRequest);
+
         mDatabase.child("hoadon").child(maHoaDonCheck).setValue(new HoaDon2(maHoaDonCheck,Integer.parseInt(table), getNgay(),1,tongTien));
     }
 
@@ -256,19 +228,13 @@ public class HoaDonActivity extends AppCompatActivity {
     private void LuuHoaDon() {
         try {
             //XoaHetChiTietCu(maHOADONCHECK);
-
             ThemVaoBangHoaDon(maHOADONCHECK);
-
             CapNhatTinhTrangBan(idBanchecking, 1);
             //ThemVaoBangChiTietHoaDon(maHOADONCHECK);
         }catch (Exception e){
 
         }
-
-
     }
-
-
 
     private void ThemVaoBangHoaDon(final String maHoaDonCheck) {
         DatabaseReference chitietref = FirebaseDatabase.getInstance().getReference("chitiethoadon");
@@ -295,33 +261,33 @@ public class HoaDonActivity extends AppCompatActivity {
                       if(thucUong.getId().equals(ct.getMaThucUong())) {
                           tam.remove(ct);
                           t++;
+                          //update chi tiết
                           chitietref.child(ct.getId()).setValue(new chitiethoadon(ct.getId(), ct.getMaHoaDon(), thucUong.getId(), thucUong.getCount()));
                       }
                       else{
                           if(kt==0){
-                              tam.add(ct);
+                              //chỉ add 1 chi tiết không có trong thức uống
+                              //add 1 lan khi kt==0;
+                              tam.add(ct);//lay max cac chitiet
                           }
                       }
 
                   }
-
                   if(t==0){
+                      //thêm mới chi tiết
                       String key = mDatabase.push().getKey();
                       chitietref.child(key).setValue(new chitiethoadon(key,maHoaDonCheck,thucUong.getId(),thucUong.getCount()));
                   }
-
                   t=0;
                   kt++;
               }
               for (chitiethoadon ct : tam){
+                  //xóa chi tiết bằng 0
                   chitietref.child(ct.getId()).removeValue();
               }
 
           }
-
-
     }
-
     private void CapNhatTinhTrangBan(final int idBan, final int tinhTrang) {
             mDatabase.child("Ban").addChildEventListener(new ChildEventListener() {
                 @Override
@@ -358,84 +324,10 @@ public class HoaDonActivity extends AppCompatActivity {
     private void LayDuLieuBanCoNguoi() {
         Intent intent = getIntent();
         table = intent.getStringExtra("table");
-
-
     }
 
-    private void TaoViewBanTrong() {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-        String[] str = timeStamp.split("_");
-        String[] str2 = str[0].split("");
-        String year = str2[1]+str2[2]+str2[3]+str2[4];
-        String month = str2[5]+str2[6];
-        String day = str2[7]+str2[8];
-
-        String[] str3 = str[1].split("");
-        String hour = str3[1]+str3[2];
-        String minute = str3[3]+str3[4];
-        String sec = str3[5]+str3[6];
-        tvTime.setText("Thời gian: "+day+"/"+month+"/"+year+"   "+hour+":"+minute+":"+sec);
-
-        adapterHienThiHoaDon = new AdapterHienThiHoaDon(HoaDonActivity.this, R.layout.custom_layout_hienthihoadon, listThucUong);
-        lvHoaDon.setAdapter(adapterHienThiHoaDon);
-        adapterHienThiHoaDon.notifyDataSetChanged();
-
-
-    }
     private void TaoViewBanCoNguoi() {
 
-//        tvTable.setText("Bàn "+table);
-//
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanGetDataBan + table, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                if(response !=null){
-//                    for(int i=0; i<response.length(); i++){
-//
-//                        try {
-//                            JSONObject jsonObject = response.getJSONObject(i);
-//                            String id_thucuong = jsonObject.getString("id_thucuong");
-//                            String tenThucUong = jsonObject.getString("tenthucuong");
-//                            long gia = jsonObject.getLong("gia");
-//                            int maLoai = jsonObject.getInt("maloai");
-//                            String anh = jsonObject.getString("anh");
-//                            String tenLoai = jsonObject.getString("tenloai");
-//                            int count = jsonObject.getInt("soluong");;
-//                            listThucUong.add(new ThucUong(id_thucuong, tenThucUong,gia,maLoai,anh,count ,tenLoai));
-//                            tongTien = jsonObject.getLong("thanhtien");
-//                            thoigian = jsonObject.getString("ngaytao");
-//                            maHOADONCHECK = jsonObject.getInt("id_hoadon");
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-//                    String[] str = timeStamp.split("_");
-//                    String[] str2 = str[0].split("");
-//                    String year = str2[1]+str2[2]+str2[3]+str2[4];
-//                    String month = str2[5]+str2[6];
-//                    String day = str2[7]+str2[8];
-//
-//                    String[] str3 = str[1].split("");
-//                    String hour = str3[1]+str3[2];
-//                    String minute = str3[3]+str3[4];
-//                    String sec = str3[5]+str3[6];
-//                    tvTime.setText("Thời gian: "+day+"/"+month+"/"+year+"   "+hour+":"+minute+":"+sec);
-//                    //tvTime.setText("Thời gian: "+thoigian);
-//                    tvTotalBill.setText("Tổng tiền: "+getTien(tongTien));
-//
-//                    adapterHienThiHoaDon.notifyDataSetChanged();
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueue.add(jsonArrayRequest);
         tvTable.setText("Bàn số: "+table);
         final DatabaseReference ctref = FirebaseDatabase.getInstance().getReference("chitiethoadon");
           mDatabase.child("hoadon").addChildEventListener(new ChildEventListener() {
@@ -545,8 +437,13 @@ public class HoaDonActivity extends AppCompatActivity {
         String soBan= intent.getStringExtra("table");
         idBanchecking = Integer.parseInt(intent.getStringExtra("table").trim());
         tvTable.setText("Bàn Số: "+soBan);
+        tvTime.setText("Thời gian: "+getNgay());
     }
-
+    private void TaoViewBanTrong() {
+        adapterHienThiHoaDon = new AdapterHienThiHoaDon(HoaDonActivity.this, R.layout.custom_layout_hienthihoadon, listThucUong);
+        lvHoaDon.setAdapter(adapterHienThiHoaDon);
+        adapterHienThiHoaDon.notifyDataSetChanged();
+    }
     private void getTongBill(){
         tongTien = 0;
         for (int i=0; i<listThucUong.size(); i++){
@@ -586,10 +483,9 @@ public class HoaDonActivity extends AppCompatActivity {
             }
         }
 
-        return money+" VND";
+        return money+" VNĐ";
     }
-    private String getNgay()
-    {
+    private String getNgay() {
         String tg;
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
         String[] str = timeStamp.split("_");
@@ -609,19 +505,18 @@ public class HoaDonActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        if (requestCode == 111) {
+        if (requestCode == 11) {
             if(resultCode == Activity.RESULT_OK){
                 ArrayList<ThucUong> listThucUongThem = new ArrayList<>();
                 listThucUongThem = (ArrayList<ThucUong>) data.getSerializableExtra("result");
-                String str = "";
+                String chuoi = "";
                 for (ThucUong item : listThucUong)
                 {
-                    str += item.getTenThucUong();
+                    chuoi += item.getTenThucUong();
                 }
-                Log.e("--------------",str);
                 for (int j = 0; j<listThucUongThem.size(); j++)
                 {
-                    if (!str.contains(listThucUongThem.get(j).getTenThucUong()))
+                    if (!chuoi.contains(listThucUongThem.get(j).getTenThucUong()))
                     {
                         listThucUong.add(listThucUongThem.get(j));
                     }
@@ -641,7 +536,7 @@ public class HoaDonActivity extends AppCompatActivity {
                     if(listThucUong.get(i).getCount()==0)
                         listThucUong.remove(i);
                 }
-                CHECK_START_MENU = false;
+                CHECK_HD = false;
                 getTongBill();
                 adapterHienThiHoaDon.notifyDataSetChanged();
             }
