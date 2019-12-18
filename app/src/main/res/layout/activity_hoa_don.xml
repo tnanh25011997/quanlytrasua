@@ -148,6 +148,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent">
                             <Button
+                                android:drawableLeft="@drawable/thembill"
                                 android:textColor="#90000000"
                                 android:id="@+id/btnThem"
                                 android:background="#00ffffff"
@@ -176,6 +177,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
                                 <Button
+                                    android:drawableLeft="@drawable/luuhd"
                                     android:textColor="#90000000"
                                     android:id="@+id/btnLuuHD"
                                     android:background="#00ffffff"
@@ -207,10 +209,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
                                 <Button
+                                    android:drawableLeft="@drawable/thanhtoan"
                                     android:textColor="#90000000"
                                     android:id="@+id/btnThanhToan"
                                     android:background="#00ffffff"
-                                    android:text="Thanh Toán"
+                                    android:text="T.Toán"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
 

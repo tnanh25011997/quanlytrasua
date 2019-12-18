@@ -86,57 +86,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void Login(final String tenDangNhap, final String matKhau) {
 
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Server.DuongDanLogin,
-////                new Response.Listener<String>() {
-////                    @Override
-////                    public void onResponse(String response) {
-////                        try {
-////                            JSONObject jsonObject = new JSONObject(response);
-////                            String success = (String) jsonObject.get("success");
-////                            JSONArray jsonArray =  jsonObject.getJSONArray("data");
-////
-////                            if(success.equals("1")){
-////                                for(int i = 0; i< jsonArray.length(); i++){
-////                                    JSONObject object = jsonArray.getJSONObject(i);
-////                                    String name = object.getString("fullname");
-////                                    String tenDangNhap = object.getString("username");
-////
-////                                    sessionManager.CreateSession(name, tenDangNhap);
-////                                    Intent intent = new Intent(LoginActivity.this, DanhSachBanActivity.class);
-////                                    intent.putExtra("fullname",name);
-////                                    startActivity(intent);
-////                                    finish();
-////                                }
-////
-////                            }
-////                            else {
-////                                Toast.makeText(LoginActivity.this,"Sai tài khoản mật khẩu", Toast.LENGTH_LONG).show();
-////                            }
-////
-////
-////                        } catch (JSONException e) {
-////                            e.printStackTrace();
-////                            Toast.makeText(LoginActivity.this,"Sai Tên Tài Khoản Hoặc Mật Khẩu", Toast.LENGTH_LONG).show();
-////                        }
-////                    }
-////                },
-////                new Response.ErrorListener() {
-////                    @Override
-////                    public void onErrorResponse(VolleyError error) {
-////                        Toast.makeText(LoginActivity.this,"ERROR2", Toast.LENGTH_LONG).show();
-////                    }
-////                })
-////        {
-////            @Override
-////            protected Map<String, String> getParams() throws AuthFailureError {
-////                Map<String, String> params = new HashMap<>();
-////                params.put("TenDangNhap", tenDangNhap);
-////                params.put("MatKhau", matKhau);
-////                return params;
-////            }
-////        };
-////        RequestQueue requestQueue = Volley.newRequestQueue(this);
-////        requestQueue.add(stringRequest);
+
         mAuth.signInWithEmailAndPassword(tenDangNhap, matKhau)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

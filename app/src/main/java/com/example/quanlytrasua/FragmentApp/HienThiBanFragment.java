@@ -109,33 +109,7 @@ public class HienThiBanFragment extends Fragment {
     }
 
     private void GetDuLieuBan() {
-//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Server.DuongDanBan, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                if(response !=null){
-//                    for(int i=0; i<response.length(); i++){
-//
-//                        try {
-//                            JSONObject jsonObject = response.getJSONObject(i);
-//                            id = jsonObject.getInt("ID");
-//                            tenBan = jsonObject.getString("TenBan");
-//                            tinhTrang = jsonObject.getInt("TinhTrang");
-//                            banDTOList.add(new BanDTO(id,tenBan, tinhTrang));
-//                            adapterHienThiBan.notifyDataSetChanged();
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueue.add(jsonArrayRequest);
+
 
         mData.child("Ban").addChildEventListener(new ChildEventListener() {
             @Override
